@@ -1,7 +1,7 @@
 <?php
 require_once('db.php');
 
-class assignmentone
+class connect
 {
    private static $instance;
    private $dbconn;
@@ -39,6 +39,21 @@ class assignmentone
    public function query_region()
    {
       $sql = "select region_id, region_name from region";
+      $this->result = mysql_query($sql);
+      if($this->result)
+      {
+         while($row = mysql_fetch_assoc($this->result))
+         {
+            $results[] = $row;
+         }
+      }
+      return $results;
+   }
+   
+   // query variety_id and variety from grape_variety
+   public function query_grape_variety()
+   {
+      $sql = "select variety_id, variety from grape_variety";
       $this->result = mysql_query($sql);
       if($this->result)
       {
