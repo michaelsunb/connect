@@ -1,11 +1,13 @@
 <?php
 require_once('db.php');
 
+DEFINE("DEFAULT_START_LIMIT",0);
+DEFINE("DEFAULT_END_LIMIT",30);
+
 class connect
 {
    private static $instance;
    private $dbconn;
-   private $result;
 
    // singleton to keep mysql connection alive.
    public static function singleton()
@@ -34,46 +36,9 @@ class connect
          exit;
       }
    }
-   
-   // query region_id and region_name from region
-   public function query_region()
-   {
-      $sql = "select region_id, region_name from region";
-      $this->result = mysql_query($sql);
-      if($this->result)
-      {
-         while($row = mysql_fetch_assoc($this->result))
-         {
-            $results[] = $row;
-         }
-      }
-      return $results;
-   }
-   
-   // query variety_id and variety from grape_variety
-   public function query_grape_variety()
-   {
-      $sql = "select variety_id, variety from grape_variety";
-      $this->result = mysql_query($sql);
-      if($this->result)
-      {
-         while($row = mysql_fetch_assoc($this->result))
-         {
-            $results[] = $row;
-         }
-      }
-      return $results;
-   }
 
    public function __destruct()
    {
-      if(!isset($this->result))
-      {
-         // free result set memory
-         mysql_free_result($this->result);
-         unset($this->result);
-      }
-      
       // close connection
       mysql_close($this->dbconn);
       unset($this->dbconn);
