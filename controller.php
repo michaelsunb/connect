@@ -115,9 +115,4 @@ class Controller
    {
       $this->commonActions();
    }
-
-   public function testAction()
-   {
-		$this->test = "HELLO WORLD!!!";
-   }
 }
