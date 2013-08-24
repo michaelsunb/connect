@@ -1,0 +1,19 @@
+Options -Indexes
+
+RewriteEngine On
+RewriteBase /
+
+# Redirect all requests to e.g. /results/* to /connect/index.php
+# Regular pages (i.e. built to be used on a pc)
+RewriteRule ^index.html?$ /connect/index.php [QSA,L]
+RewriteRule ^results(.*)$ /connect/index.php [QSA,L]
+RewriteRule ^test(.*)$ /connect/index.php [QSA,L]
+RewriteRule ^404(.*)$ /connect/index.php [QSA,L]
+
+RewriteRule ^model_([A-Za-z]+)(.*)$ /connect/404.shtml  [R]
+RewriteRule ^controller.php$ /connect/404.shtml  [R]
+RewriteRule ^connect.php$ /connect/404.shtml  [R]
+RewriteRule ^db.php$ /connect/404.shtml  [R]
+RewriteRule ^README.md$ /connect/404.shtml  [R]
+
+ErrorDocument 404 /connect/view_404.php
