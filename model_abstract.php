@@ -8,7 +8,10 @@ abstract class ModelAbstract
     */
    protected $result = null;
 
-   // constructor to open connection and select database.
+   /**
+    * connect to connect singleton for open
+    * mysql connection
+    */
    public function __construct()
    {
       connect::singleton();

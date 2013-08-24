@@ -1,15 +1,25 @@
 <?php
 require_once('db.php');
 
-DEFINE("DEFAULT_START_LIMIT",0);
-DEFINE("DEFAULT_END_LIMIT",30);
-
 class connect
 {
+   /**
+    * Singleton to hold the class in this variable.
+    *
+    * @var instance
+    */
    private static $instance;
+   
+   /**
+    * database connection.
+    *
+    * @var dbconn
+    */
    private $dbconn;
 
-   // singleton to keep mysql connection alive.
+   /**
+    * singleton to keep mysql connection alive.
+    */
    public static function singleton()
    {
       if(!isset(self::$instance))
@@ -20,7 +30,10 @@ class connect
       return self::$instance;
    }
 
-   // constructor to open connection and select database.
+   /**
+    * constructor to open connection and select database.
+    * Will exit if cannot connect to mysql host or database.
+    */
    private function __construct()
    {
       if(!$this->dbconn = mysql_connect(DB_HOST, DB_USER, DB_PW))
