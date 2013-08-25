@@ -19,6 +19,22 @@ class ModelWine extends ModelAbstract
    /**
     * query values from wine
     *
+    * @return array  return wine_id, year and wine_name
+    *                array from wine table.
+    */
+   public function query_years()
+   {
+      $sql = "select 
+      DISTINCT `wine`.`year` 
+      from `wine`
+      ORDER BY `wine`.`year` DESC ";
+
+      return $this->retrieve_all($sql);
+   }
+
+   /**
+    * query values from wine
+    *
     * @param string $sql   search string for wine_name.
     * @return array        return wine_id, year and wine_name
     *                      array from wine table.

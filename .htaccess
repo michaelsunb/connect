@@ -1,19 +1,32 @@
 Options -Indexes
 
+# invoke rewrite engine
+
 RewriteEngine On
 RewriteBase /
 
-# Redirect all requests to e.g. /results/* to /connect/index.php
-# Regular pages (i.e. built to be used on a pc)
+# http://httpd.apache.org/docs/2.2/rewrite/flags.html
+# [QSA] maps a request e.g. /index/123 to /index.php?page=123
+# [R] HTTP redirect
+# [L] causes no further rules to be processed
+
+RewriteRule ^model_([A-Za-z]+)(.*)$ /connect/404.shtml  [R,L]
+RewriteRule ^controller.php$ /connect/404.shtml  [R,L]
+RewriteRule ^connect.php$ /connect/404.shtml  [R,L]
+RewriteRule ^db.php$ /connect/404.shtml  [R,L]
+RewriteRule ^README.md$ /connect/404.shtml  [R,L]
+
+# Custom 404 errors
+ErrorDocument 404 /connect/404.shtml
+
+# To create a action:
+# - create a RewriteRule with the action mapping 
+#   to /connect/index.php with [QSA,L]
+# - create a view file named view_(action name).php
+# - create a protected action funtion in the controller
+#   named (action name)Action()
+
 RewriteRule ^index.html?$ /connect/index.php [QSA,L]
 RewriteRule ^results(.*)$ /connect/index.php [QSA,L]
 RewriteRule ^test(.*)$ /connect/index.php [QSA,L]
 RewriteRule ^404(.*)$ /connect/index.php [QSA,L]
-
-RewriteRule ^model_([A-Za-z]+)(.*)$ /connect/404.shtml  [R]
-RewriteRule ^controller.php$ /connect/404.shtml  [R]
-RewriteRule ^connect.php$ /connect/404.shtml  [R]
-RewriteRule ^db.php$ /connect/404.shtml  [R]
-RewriteRule ^README.md$ /connect/404.shtml  [R]
-
-ErrorDocument 404 /connect/view_404.php
