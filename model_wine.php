@@ -35,9 +35,9 @@ class ModelWine extends ModelAbstract
    /**
     * query values from wine
     *
-    * @param string $sql   search string for wine_name.
-    * @return array        return wine_id, year and wine_name
-    *                      array from wine table.
+    * @param string $wine_name   search string for wine_name.
+    * @return array              return wine_id, year and wine_name
+    *                            array from wine table.
     */
    public function search_wine_name($wine_name)
    {

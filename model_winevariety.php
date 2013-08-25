@@ -30,15 +30,12 @@ class ModelWineVariety extends ModelAbstract
       `winery`.`winery_name`, 
       `winery`.`region_id`, 
       `inventory`.`on_hand`, 
-      `inventory`.`cost`, 
-      `items`.`qty`, 
-      `items`.`price` 
+      `inventory`.`cost` 
       FROM `wine_variety` 
       JOIN `wine` ON `wine_variety`.`wine_id`=`wine`.`wine_id` 
       JOIN `wine_type` ON `wine`.`wine_type`=`wine_type`.`wine_type_id` 
       JOIN `winery` ON `wine`.`winery_id`=`winery`.`winery_id` 
       JOIN `inventory` ON `wine`.`wine_id`=`inventory`.`wine_id` 
-      JOIN `items` ON `wine`.`wine_id`=`items`.`wine_id` 
       WHERE `wine`.`wine_name` LIKE '%" . $wine_name ."%' 
       AND `winery`.`winery_name` LIKE '%" . $winery_name ."%'";
       
@@ -52,7 +49,7 @@ class ModelWineVariety extends ModelAbstract
       $sql .= "
       ORDER BY `wine`.`wine_name` ASC
       LIMIT " . $limit_start . ", " . $total_limit;
-//echo $sql;
+
       return $this->retrieve_all($sql);
    }
 }

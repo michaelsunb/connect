@@ -3,6 +3,8 @@ require_once('model_region.php');
 require_once('model_grapevariety.php');
 require_once('model_wine.php');
 require_once('model_winevariety.php');
+require_once('model_orders.php');
+require_once('model_customer.php');
 
 require_once('helpers.php');
 
@@ -17,17 +19,14 @@ class Controller
     */
    public function init($actions,$file_name)
    {
-      if($actions == 404)
-      {
-         $actions = 'missing';
-      }
-      $action = $actions.'Action';
+      $action = '_'.$actions.'Action';
       $this->$action();
 
       ob_start();
       require_once($_SERVER['DOCUMENT_ROOT'] . "/assign1/partb/".$file_name);
-		$contents = ob_get_contents();
-		ob_end_clean();
+      $contents = ob_get_contents();
+      ob_end_clean();
+
       return $contents;
    }
 
@@ -77,6 +76,36 @@ class Controller
          $this->grape_variety = $_GET['grape_variety'];
       }
       
+      // get $_GET requests and check if they are numbers
+      $this->min_cost = 0;
+      if(isset($_GET['min_cost']))
+      {
+         $min_cost = preg_replace('/^\$/', '', $_GET["min_cost"]);
+         if(preg_match("/^[0-9.]+$/", $min_cost))
+         {
+            $this->min_cost = $min_cost;
+         }
+      }
+      
+      // get $_GET requests and check if they are numbers
+      $this->max_cost = 0;
+      if(isset($_GET['max_cost']))
+      {
+         $max_cost = preg_replace('/^\$/', '', $_GET["max_cost"]);
+         if(preg_match("/^[0-9.]+$/", $max_cost))
+         {
+            $this->max_cost = $max_cost;
+         }
+      }
+
+      $this->html_cost_error = "";
+      if($this->min_cost > $this->max_cost)
+      {
+         $this->html_cost_error =
+            '<span style="color:red;">Min Cost must be lower than Max Cost</span>';
+      }
+
+
       // 2 to 9 because region All is 1 and region_id 1 produces no results.
       $this->region = 0;
       if(isset($_GET['region']) && preg_match("/^[2-9]+$/", $_GET['region']))
@@ -132,7 +161,7 @@ class Controller
     *
     * @return void.
     */
-   protected function indexAction()
+   protected function _indexAction()
    {
       $this->commonActions();
    }
@@ -142,7 +171,7 @@ class Controller
     *
     * @return void.
     */
-   protected function resultsAction()
+   protected function _resultsAction()
    {
       $this->commonActions();
 
@@ -211,14 +240,22 @@ class Controller
          $this->wine_results = 
             /**
              * wine_variety model has the sql with lots ofjoins.
-             * $this->winesearch from $_GET['winesearch'] request.
-             * $this->winerysearch from $_GET['winerysearch'] request.
-             * $selectsearch from select box $_GET requests.
-             * $this->limit_start $_GET['next'] request.
-             * $this->limit_end from DEFAULT_TOTAL_LIMIT which is 30.
+             *
+             * $this->winesearch    from $_GET['winesearch'] request.
+             * $this->winerysearch  from $_GET['winerysearch'] request.
+             * $selectsearch        from select box $_GET requests.
+             * $this->limit_start   $_GET['next'] request.
+             * $this->limit_end     from DEFAULT_TOTAL_LIMIT which is 30.
              */
             $this->model_winevariety->search_wine_name($this->winesearch,$this->winerysearch,$selectsearch, 
                $this->limit_start, $this->limit_end);
+
+         $orders_model = new ModelOrders();
+         foreach($this->wine_results as $key=>$value)
+         {
+            // add total orders to array.
+            $this->wine_results[$key] += $orders_model->retrieve_totals($value['wine_id']);
+         }
       }
 
       /**
@@ -241,11 +278,11 @@ class Controller
    }
 
    /**
-    * results action /404.shtml, /404(anything)
+    * 404 missing action /404.shtml, /404(anything)
     *
     * @return void.
     */
-   protected function missingAction()
+   protected function _404Action()
    {
       $this->commonActions();
    }

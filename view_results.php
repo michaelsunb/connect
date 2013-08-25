@@ -1,6 +1,5 @@
 
    <form action="/assign1/partb/results.html" method="get">
-      <input type="hidden" name="next" value="<?= $this->limit_start; ?>">
       <div>
       Region: 
       <? Helpers::select("region",$this->region_results,array('region_id','region_name'),$this->region); ?>
@@ -23,8 +22,9 @@
       Search Winery: <input type="search" name="winerysearch" value="<?= $this->winerysearch; ?>">
       </div>
       <div>
-      Min: <input type="search" name="min_cost" value="" maxlength="6" size="6">
-      Max: <input type="search" name="min_cost" value="" maxlength="6" size="6">
+      Min Cost: <input type="search" name="min_cost" value="<?= $this->min_cost; ?>" maxlength="6" size="6">
+      Max Cost: <input type="search" name="max_cost" value="<?= $this->max_cost; ?>" maxlength="6" size="6">
+      <?= $this->html_cost_error; ?>
       </div>
       <input type="submit">
    </form>
@@ -42,8 +42,8 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
             <th>Region</th>
             <th>On Hand</th>
             <th>Cost</th>
-            <th>Customer<br />Quantity</th>
-            <th>Customer<br />Price</th>
+            <th>Total<br />Stock Sold</th>
+            <th>Total<br />Sales Revenue</th>
          </tr>
       </thead>
       <tfoot>
@@ -61,11 +61,24 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
          </tr>
       </tfoot>
       <tbody style="text-align:center;"><?
+   
+   $cust_model = new ModelCustomer();
    foreach($this->wine_results as $row)
    {
       $region_row = Helpers::inArrays($this->region_results,$row['region_id'],'region_id');
       $variety_row = Helpers::inArrays($this->grape_variety_results,$row['variety_id'],'variety_id');
-      
+
+      /*
+      $orders = array();
+      foreach($this->orders_results as $order_row)
+      {
+         if($order_row['wine_id'] == $row['wine_id'])
+         {
+            $orders[] = $order_row + $this->cust_model->search_cust_id($order_row['cust_id']);
+         }
+      }
+      */
+
       echo "\n";
       ?>
          <tr>
@@ -77,8 +90,8 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
             <td><?= $region_row['region_name']; ?></td>
             <td><?= $row['on_hand']; ?></td>
             <td>$<?= $row['cost']; ?></td>
-            <td><?= $row['qty']; ?></td>
-            <td>$<?= $row['price']; ?></td>
+            <td><?= $row['total_qty']; ?></td>
+            <td>$<?= $row['total_price']; ?></td>
          </tr><?
    }
    ?>

@@ -11,13 +11,14 @@ RewriteBase /
 # [L] causes no further rules to be processed
 
 RewriteRule ^model_([A-Za-z]+)(.*)$ /assign1/partb/404.shtml  [R,L]
+RewriteRule ^view_([A-Za-z0-9]+)(.*)$ /assign1/partb/404.shtml  [R,L]
 RewriteRule ^controller.php$ /assign1/partb/404.shtml  [R,L]
 RewriteRule ^connect.php$ /assign1/partb/404.shtml  [R,L]
 RewriteRule ^db.php$ /assign1/partb/404.shtml  [R,L]
 RewriteRule ^README.md$ /assign1/partb/404.shtml  [R,L]
 
 # Custom 404 errors
-# ErrorDocument 404 /assign1/partb/404.shtml
+ErrorDocument 404 /assign1/partb/404.shtml
 
 # To create a action:
 # - create a RewriteRule with the action mapping 
