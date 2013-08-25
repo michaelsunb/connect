@@ -4,7 +4,6 @@ DEFINE("DEFAULT_END_LIMIT",30);
 DEFINE("DEFAULT_TOTAL_LIMIT",30);
 
 DEFINE("ADD_TO_LIMIT",30);
-DEFINE("ACTION_URI",2);
 
 // replace + (space) sign with \+ for preg_match
 $query_string = str_replace('+', '\+', $_SERVER["QUERY_STRING"]);
@@ -13,9 +12,11 @@ $destination = preg_replace('/\?'.$query_string.'/', "", $_SERVER['REQUEST_URI']
 
 /**
  * Split uri by / into an array to grab 
- * the Action for the URI
+ * the Action for the URI and
+ * removes last array into $matches
  */
 $matches = explode("/",$destination);
+$actions = array_pop($matches);
 
 // create layout
 ?>
@@ -25,15 +26,15 @@ $matches = explode("/",$destination);
 <body>
 <? 
 // if URI is just / then redirect to index.html
-if(!isset($matches[ACTION_URI]) || $matches[ACTION_URI] == '')
+if(!isset($actions) || $actions == null)
 {
-	header("location:/connect/index.html");
+	header("location:/assign1/partb/index.html");
 	exit;
 }
 else
 {
    // remove shtml, htm, or html or action
-   $action = preg_replace('/(.s?html?|.php)$/', "", $matches[ACTION_URI]);
+   $action = preg_replace('/(.s?html?|.php)$/', "", $actions);
 }
 
 /**
@@ -44,7 +45,7 @@ $view_script_path = 'view_'.$action.'.php';
 if(!file_exists($view_script_path) || !preg_match("/^([a-z]+|404)$/", $action))
 {
 	header("HTTP/1.0 404 Not Found");
-	header("location:/connect/404.shtml");
+	header("location:/assign1/partb/404.shtml");
 	exit;
 }
 

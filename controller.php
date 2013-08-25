@@ -25,7 +25,7 @@ class Controller
       $this->$action();
 
       ob_start();
-      require_once($_SERVER['DOCUMENT_ROOT'] . "/connect/".$file_name);
+      require_once($_SERVER['DOCUMENT_ROOT'] . "/assign1/partb/".$file_name);
 		$contents = ob_get_contents();
 		ob_end_clean();
       return $contents;
@@ -123,8 +123,8 @@ class Controller
       $this->add_gets .= '&amp;winerysearch='.str_replace(' ', '%20', $this->winerysearch);
 
       // format html a href link.
-      $this->html_nxt_link = '<a href="/connect/index.html">reset search</a><br />';
-      $this->html_nxt_link .= '<a href="/connect/results.html?'.$this->add_gets.'">reset pagination</a>';
+      $this->html_nxt_link = '<a href="/assign1/partb/index.html">reset search</a><br />';
+      $this->html_nxt_link .= '<a href="/assign1/partb/results.html?'.$this->add_gets.'">reset pagination</a>';
    }
 
    /**

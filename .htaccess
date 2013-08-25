@@ -10,23 +10,23 @@ RewriteBase /
 # [R] HTTP redirect
 # [L] causes no further rules to be processed
 
-RewriteRule ^model_([A-Za-z]+)(.*)$ /connect/404.shtml  [R,L]
-RewriteRule ^controller.php$ /connect/404.shtml  [R,L]
-RewriteRule ^connect.php$ /connect/404.shtml  [R,L]
-RewriteRule ^db.php$ /connect/404.shtml  [R,L]
-RewriteRule ^README.md$ /connect/404.shtml  [R,L]
+RewriteRule ^model_([A-Za-z]+)(.*)$ /assign1/partb/404.shtml  [R,L]
+RewriteRule ^controller.php$ /assign1/partb/404.shtml  [R,L]
+RewriteRule ^connect.php$ /assign1/partb/404.shtml  [R,L]
+RewriteRule ^db.php$ /assign1/partb/404.shtml  [R,L]
+RewriteRule ^README.md$ /assign1/partb/404.shtml  [R,L]
 
 # Custom 404 errors
-ErrorDocument 404 /connect/404.shtml
+# ErrorDocument 404 /assign1/partb/404.shtml
 
 # To create a action:
 # - create a RewriteRule with the action mapping 
-#   to /connect/index.php with [QSA,L]
+#   to /assign1/partb/index.php with [QSA,L]
 # - create a view file named view_(action name).php
 # - create a protected action funtion in the controller
 #   named (action name)Action()
 
-RewriteRule ^index.html?$ /connect/index.php [QSA,L]
-RewriteRule ^results(.*)$ /connect/index.php [QSA,L]
-RewriteRule ^test(.*)$ /connect/index.php [QSA,L]
-RewriteRule ^404(.*)$ /connect/index.php [QSA,L]
+RewriteRule ^index.html?$ /assign1/partb/index.php [QSA,L]
+RewriteRule ^results(.*)$ /assign1/partb/index.php [QSA,L]
+RewriteRule ^test(.*)$ /assign1/partb/index.php [QSA,L]
+RewriteRule ^404(.*)$ /assign1/partb/index.php [QSA,L]

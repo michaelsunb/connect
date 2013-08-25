@@ -1,5 +1,5 @@
 
-   <form action="/connect/results.html" method="get">
+   <form action="/assign1/partb/results.html" method="get">
       <input type="hidden" name="next" value="<?= $this->limit_start; ?>">
       <div>
       Region: 
