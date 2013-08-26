@@ -8,6 +8,8 @@ require_once('model_customer.php');
 
 require_once('helpers.php');
 
+DEFINE("DEFAULT_ORDER_COLUMN",0);
+
 class Controller
 {
    /**
@@ -23,7 +25,7 @@ class Controller
       $this->$action();
 
       ob_start();
-      require_once($_SERVER['DOCUMENT_ROOT'] . "/assign1/partb/".$file_name);
+      require_once($_SERVER['DOCUMENT_ROOT'] . $_SERVER["ASSIGN_PATH"] .$file_name);
       $contents = ob_get_contents();
       ob_end_clean();
 
@@ -45,10 +47,11 @@ class Controller
     */
    private function commonActions()
    {
-      // Default sql starting from row in table
+      /** Default sql starting from row in table */
       $this->limit_start = DEFAULT_START_LIMIT;
 
-      // create new models class.
+      /** Create new models class. */
+      $this->model_orders = new ModelOrders();
       $this->model_wine = new ModelWine();
       $this->model_winevariety = new ModelWineVariety();
       $this->model_region = new ModelRegion();
@@ -62,21 +65,21 @@ class Controller
       $this->region_results = $this->model_region->query_region();
       $this->grape_variety_results = $this->model_grape_varity->query_grape_variety();
 
-      // get $_GET requests and check if they are numbers.
+      /** Get $_GET requests and check if they are numbers. */
       $this->wine_year = 0;
       if(isset($_GET['wine_year']) && preg_match("/^[0-9]+$/", $_GET['wine_year']))
       {
          $this->wine_year = $_GET['wine_year'];
       }
       
-      // get $_GET requests and check if they are numbers
+      /** Get $_GET requests and check if they are numbers. */
       $this->grape_variety = 0;
       if(isset($_GET['grape_variety']) && preg_match("/^[0-9]+$/", $_GET['grape_variety']))
       {
          $this->grape_variety = $_GET['grape_variety'];
       }
       
-      // get $_GET requests and check if they are numbers
+      /** Get $_GET requests and check if they are numbers. */
       $this->min_cost = 0;
       if(isset($_GET['min_cost']))
       {
@@ -87,7 +90,7 @@ class Controller
          }
       }
       
-      // get $_GET requests and check if they are numbers
+      /** Get $_GET requests and check if they are numbers. */
       $this->max_cost = 0;
       if(isset($_GET['max_cost']))
       {
@@ -105,25 +108,24 @@ class Controller
             '<span style="color:red;">Min Cost must be lower than Max Cost</span>';
       }
 
-
-      // 2 to 9 because region All is 1 and region_id 1 produces no results.
+      /** 2 to 9 because region All is 1 and region_id 1 produces no results. */
       $this->region = 0;
       if(isset($_GET['region']) && preg_match("/^[2-9]+$/", $_GET['region']))
       {
          $this->region = $_GET['region'];
       }
 
-      // allow if true to do a search query at results action.
+      /** Allow if true to do a search query at results action. */
       $this->allow_search = true;
       $this->winesearch = "";
       if(isset($_GET['winesearch']))
       {
          $this->winesearch = $_GET['winesearch'];
-         // Allows all letters
+         /** Allows all letters. */
          if(!preg_match("/^[A-Za-z]+$/", $_GET['winesearch']) &&
             $_GET['winesearch'] != "")
          {
-            // don't allow search query because $_GET request failed.
+            /** Don't allow search query because $_GET request failed. */
             $this->allow_search = false;
          }
       }
@@ -133,27 +135,41 @@ class Controller
       {
          $this->winerysearch = $_GET['winerysearch'];
 
-         // Allows spaces as well as all letters
+         /** Allows spaces as well as all letters. */
          if(!preg_match("/^[A-Za-z ]+$/", $_GET['winerysearch']) &&
             $_GET['winerysearch'] != "")
          {
-            // don't allow search query because $_GET request failed.
+            /** Don't allow search query because $_GET request failed. */
             $this->allow_search = false;
          }
       }
-      
-      // add above $_GET requests to string for html link.
+
+      $this->column = DEFAULT_ORDER_COLUMN;
+      if(isset($_GET['column']) && preg_match("/^[0-9]{1}$/", $_GET['column']))
+      {
+         $this->column = $_GET['column'];
+      }
+
+      /** Add above $_GET requests to string for html link. */
       $this->add_gets = 'region='.$this->region;
       $this->add_gets .= '&amp;wine_year='.$this->wine_year;
       $this->add_gets .= '&amp;grape_variety='.$this->grape_variety;
+      $this->add_gets .= '&amp;min_cost='.$this->min_cost;
+      $this->add_gets .= '&amp;max_cost='.$this->max_cost;
 
-      // replace whitespace with %20 for w3c standards.
+      /** Replace whitespace with %20 for w3c standards. */
       $this->add_gets .= '&amp;winesearch='.str_replace(' ', '%20', $this->winesearch);
       $this->add_gets .= '&amp;winerysearch='.str_replace(' ', '%20', $this->winerysearch);
 
-      // format html a href link.
-      $this->html_nxt_link = '<a href="/assign1/partb/index.html">reset search</a><br />';
-      $this->html_nxt_link .= '<a href="/assign1/partb/results.html?'.$this->add_gets.'">reset pagination</a>';
+      /** Create url for columns. */
+      $this->html_column = '?'.$this->add_gets.'&amp;column=';
+
+      /** Add columns to add_gets. */
+      $this->add_gets .= '&amp;column='.$this->column;
+
+      /** Format html a href link. */
+      $this->html_nxt_link = '<a href="'.$_SERVER["ASSIGN_PATH"].'index.html">reset search</a><br />';
+      $this->html_nxt_link .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'">reset pagination</a>';
    }
 
    /**
@@ -190,11 +206,11 @@ class Controller
           */
          $this->limit_end = DEFAULT_TOTAL_LIMIT;
          
-         // Default html links
+         /** Default html links. */
          $this->prev_link = DEFAULT_START_LIMIT;
          $this->next_link = DEFAULT_END_LIMIT;
       }
-      // otherwise put $_GET next request into sql and html strings.
+      /** otherwise put $_GET next request into sql and html strings. */
       else
       {
          /**
@@ -210,7 +226,7 @@ class Controller
          $this->prev_link = $_GET['next'] - ADD_TO_LIMIT;
          $this->next_link = $_GET['next'] + ADD_TO_LIMIT;
       }
-
+      
       /**
        * Select box selected and now adding to sql query.
        * Where $selectsearch[key] is the column name and
@@ -234,7 +250,7 @@ class Controller
       }
 
       $this->wine_results = array();
-      // allow if true to do a search query at results action.
+      /** Allow if true to do a search query at results action. */
       if($this->allow_search)
       {
          $this->wine_results = 
@@ -248,13 +264,12 @@ class Controller
              * $this->limit_end     from DEFAULT_TOTAL_LIMIT which is 30.
              */
             $this->model_winevariety->search_wine_name($this->winesearch,$this->winerysearch,$selectsearch, 
-               $this->limit_start, $this->limit_end);
+               $this->column,$this->min_cost,$this->max_cost,$this->limit_start, $this->limit_end);
 
-         $orders_model = new ModelOrders();
          foreach($this->wine_results as $key=>$value)
          {
-            // add total orders to array.
-            $this->wine_results[$key] += $orders_model->retrieve_totals($value['wine_id']);
+            /** Add total orders to array. */
+            $this->wine_results[$key] += $this->model_orders->retrieve_totals($value['wine_id']);
          }
       }
 
@@ -269,12 +284,41 @@ class Controller
          $this->html_nxt_link = '<a href="?next='.$this->next_link .'&amp;'.$this->add_gets.'">Next &gt;&gt;</a>';
       }
 
-      // Add 'Previous' link if not at the beginning of pagination.
+      /** Add 'Previous' link if not at the beginning of pagination. */
       $this->html_prv_link = '';
       if($this->limit_start != DEFAULT_START_LIMIT)
       {
          $this->html_prv_link = '<a href="?next='.$this->prev_link.'&amp;'.$this->add_gets.'">&lt;&lt; Previous</a>';
       }
+   }
+
+   /**
+    * 
+    *
+    * @return void.
+    */
+   protected function _wineinfoAction()
+   {
+      $this->wine_id = 0;
+      if(isset($_GET['wine_id']) && preg_match("/^[0-9]+$/", $_GET['wine_id']))
+      {
+         $this->wine_id = $_GET['wine_id'];
+      }
+      else
+      {
+         header("HTTP/1.0 404 Not Found");
+         header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
+         exit;
+      }
+
+      $this->commonActions();
+
+      /** Single result. */
+      $this->wine_info = $this->model_wine->query_single_wine_id($this->wine_id);
+
+      /** Multiple results. */
+      $this->wine_info_grapes = $this->model_grape_varity->search_wine_id($this->wine_id);
+      $this->wine_info_orders = $this->model_orders->retrieve_orders($this->wine_id);
    }
 
    /**

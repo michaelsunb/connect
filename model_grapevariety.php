@@ -15,4 +15,24 @@ class ModelGrapeVariety extends ModelAbstract
 
       return $this->retrieve_all($sql);
    }
+
+   /**
+    * query values from wine
+    *
+    * @param string $wine_name   search string for wine_name.
+    * @return array              return wine_id, year and wine_name
+    *                            array from wine table.
+    */
+   public function search_wine_id($wine_id)
+   {
+      $sql = "SELECT  
+      `wine_variety`.`wine_id`, 
+      `grape_variety`.`variety_id`, 
+      `grape_variety`.`variety`
+      FROM `grape_variety`  
+      JOIN `wine_variety` ON `grape_variety`.`variety_id`=`wine_variety`.`variety_id`
+      WHERE `wine_variety`.`wine_id` = " . $wine_id . "";
+
+      return $this->retrieve_all($sql);
+   }
 }

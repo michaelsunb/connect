@@ -9,27 +9,35 @@ class ModelOrders extends ModelAbstract
     * @param array $wine_ids  search ids for wine_id.
     * @return array           return all from join tables
     */
-   public function search_items($wine_ids)
+   public function retrieve_orders($wine_id)
    {
-      $add_comma = false;
-      $in_query = "IN(";
-      foreach($wine_ids as $key=>$value)
-      {
-         if($add_comma)
-         {
-            $in_query .= ",";
-         }
-         $add_comma = true;
-         $in_query .= $key;
-      }
-      $in_query .= ")";
-
-      $sql = "select *
+      $sql = "select `orders`.`order_id`,
+      `orders`.`date`,
+      `orders`.`instructions`,
+      `orders`.`creditcard`,
+      `orders`.`expirydate`,
+      `items`.`qty`,
+      `items`.`price`,
+      `titles`.`title`,
+      `customer`.`surname`,
+      `customer`.`firstname`,
+      `customer`.`initial`,
+      `customer`.`address`,
+      `customer`.`city`,
+      `customer`.`state`,
+      `customer`.`zipcode`,
+      `countries`.`country`,
+      `customer`.`phone`,
+      `customer`.`birth_date`
       from `orders` 
+      JOIN `customer` ON `orders`.`cust_id`=`customer`.`cust_id` 
+      JOIN `titles` ON `customer`.`title_id`=`titles`.`title_id` 
+      JOIN `countries` ON `customer`.`country_id`=`countries`.`country_id`
       JOIN `items` ON `orders`.`order_id`=`items`.`order_id` 
       AND `orders`.`cust_id`=`items`.`cust_id` 
-      WHERE `items`.`wine_id` " . $in_query . "";
-//echo $sql;
+      WHERE `items`.`wine_id` = " . $wine_id . "
+      ORDER BY `orders`.`order_id` ASC";
+
       return $this->retrieve_all($sql);
    }
 

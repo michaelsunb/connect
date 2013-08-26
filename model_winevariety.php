@@ -4,10 +4,28 @@ require_once('model_abstract.php');
 class ModelWineVariety extends ModelAbstract
 {
    /**
+    * @var order_column pre-defined array for the query order
+    */
+   private static $order_column = array('`wine`.`wine_name`',
+                                       '`wine`.`year`',
+                                       '`wine_type`.`wine_type`',
+                                       '`winery`.`winery_name`',
+                                       '`inventory`.`on_hand`',
+                                       '`inventory`.`cost`',
+                                       '`wine`.`wine_id`');
+
+   /**
     * query values from join tables
     *
     * @param string $wine_name   search string for wine_name.
-    * @param string $winery_name   search string for winery_name.
+    * @param string $winery_name search string for winery_name.
+    * @param array  $where       $where[key] is the column name 
+    *                            and the value is the user 
+    *                            input select..
+    * @param int    $order       integer according to 
+    *                            $this::$order_column[int].
+    * @param int    $min_cost    minimum cost. Has to be lower the max.
+    * @param int    $max_cost    maximum cost. Has to be higher the min.
     * @param string $limit_start start point for pagination.
     * @param string $total_limit total number of rows.
     * @return array              return id, wine_id, year, wine_name
@@ -16,7 +34,8 @@ class ModelWineVariety extends ModelAbstract
     *                            array from joins.
     */
    public function search_wine_name($wine_name, $winery_name,
-         $where = array(), 
+         $where = array(), $order = DEFAULT_ORDER_COLUMN,
+         $min_cost = 0, $max_cost = 0,
          $limit_start = DEFAULT_START_LIMIT,
          $total_limit = DEFAULT_TOTAL_LIMIT)
    {
@@ -38,7 +57,17 @@ class ModelWineVariety extends ModelAbstract
       JOIN `inventory` ON `wine`.`wine_id`=`inventory`.`wine_id` 
       WHERE `wine`.`wine_name` LIKE '%" . $wine_name ."%' 
       AND `winery`.`winery_name` LIKE '%" . $winery_name ."%'";
-      
+
+      /** query condition between min and max. */
+      if(($min_cost > 0 && $max_cost > 0) &&
+         ($min_cost < $max_cost))
+      {
+         $sql .= "AND  `inventory`.`cost`
+         BETWEEN ".$min_cost."
+         AND ".$max_cost;
+      }
+
+      /** add more conditions from select boxes */
       if(count($where)>0)
       {
          foreach($where as $key=>$value)
@@ -46,8 +75,10 @@ class ModelWineVariety extends ModelAbstract
             $sql .= " AND ".$key." = ".$value;
          }
       }
+
       $sql .= "
-      ORDER BY `wine`.`wine_name` ASC
+      GROUP BY `wine`.`year`, `wine`.`wine_name`
+      ORDER BY ". $this::$order_column[$order] ." ASC
       LIMIT " . $limit_start . ", " . $total_limit;
 
       return $this->retrieve_all($sql);

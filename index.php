@@ -5,9 +5,9 @@ DEFINE("DEFAULT_TOTAL_LIMIT",30);
 
 DEFINE("ADD_TO_LIMIT",30);
 
-// replace + (space) sign with \+ for preg_match
+/** replace + (space) sign with \+ for preg_match */
 $query_string = str_replace('+', '\+', $_SERVER["QUERY_STRING"]);
-// Remove any queries from the uri
+/** Remove any queries from the uri */
 $destination = preg_replace('/\?'.$query_string.'/', "", $_SERVER['REQUEST_URI']);
 
 /**
@@ -18,22 +18,22 @@ $destination = preg_replace('/\?'.$query_string.'/', "", $_SERVER['REQUEST_URI']
 $matches = explode("/",$destination);
 $actions = array_pop($matches);
 
-// create layout
+/** create layout */
 ?>
 <!DOCTYPE HTML>
 <html>
 <head><title>Michael Baluyos Assignment 1</title></head>
 <body>
 <? 
-// if URI is just / then redirect to index.html
+/** if URI is just / then redirect to index.html */
 if(!isset($actions) || $actions == null)
 {
-	header("location:/assign1/partb/index.html");
+	header('location:'.$_SERVER["ASSIGN_PATH"].'index.html');
 	exit;
 }
 else
 {
-   // remove shtml, htm, or html or action
+   /** remove shtml, htm, or html or action */
    $action = preg_replace('/(.s?html?|.php)$/', "", $actions);
 }
 
@@ -45,7 +45,7 @@ $view_script_path = 'view_'.$action.'.php';
 if(!file_exists($view_script_path) || !preg_match("/^([a-z]+|404)$/", $action))
 {
 	header("HTTP/1.0 404 Not Found");
-	header("location:/assign1/partb/404.shtml");
+	header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
 	exit;
 }
 

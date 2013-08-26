@@ -5,6 +5,9 @@ Options -Indexes
 RewriteEngine On
 RewriteBase /
 
+# Set this to use in the php code $_SERVER['ASSIGN_PATH']
+SetEnv ASSIGN_PATH /assign1/partb/
+
 # http://httpd.apache.org/docs/2.2/rewrite/flags.html
 # [QSA] maps a request e.g. /index/123 to /index.php?page=123
 # [R] HTTP redirect
@@ -29,5 +32,6 @@ ErrorDocument 404 /assign1/partb/404.shtml
 
 RewriteRule ^index.html?$ /assign1/partb/index.php [QSA,L]
 RewriteRule ^results(.*)$ /assign1/partb/index.php [QSA,L]
+RewriteRule ^wineinfo(.*)$ /assign1/partb/index.php [QSA,L]
 RewriteRule ^test(.*)$ /assign1/partb/index.php [QSA,L]
 RewriteRule ^404(.*)$ /assign1/partb/index.php [QSA,L]

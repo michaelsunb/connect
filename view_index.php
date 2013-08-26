@@ -1,5 +1,5 @@
 
-   <form action="/assign1/partb/results.html" method="get">
+   <form action="<?= $_SERVER["ASSIGN_PATH"]; ?>results.html" method="get">
       <div>
       Region: 
       <? Helpers::select("region",$this->region_results,array('region_id','region_name'),$this->region); ?>
