@@ -19,8 +19,9 @@ class ModelWine extends ModelAbstract
    /**
     * query values from wine
     *
-    * @return array  return wine_id, year and wine_name
-    *                array from wine table.
+    * @param int $wine_name   id of the wine.
+    * @return array           return wine_id, year and wine_name
+    *                         array from wine table.
     */
    public function query_single_wine_id($wine_id)
    {

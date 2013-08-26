@@ -19,13 +19,17 @@ class ModelWineVariety extends ModelAbstract
    /**
     * query values from join tables
     *
-    * @param string $wine_name   search string for wine_name.
-    * @param string $winery_name search string for winery_name.
+    * @param string $wine_name   Search string for wine_name.
+    * @param string $winery_name Search string for winery_name.
     * @param array  $where       $where[key] is the column name 
     *                            and the value is the user 
     *                            input select..
-    * @param int    $order       integer according to 
+    * @param int    $order       Integer according to 
     *                            $this::$order_column[int].
+    * @param int    $lo_year     Low bound year has to be lower than
+    *                            higher bound year.
+    * @param int    $hi_year     Higher bound year has to be higher than
+    *                            lower bound year.
     * @param int    $min_cost    minimum cost. Has to be lower the max.
     * @param int    $max_cost    maximum cost. Has to be higher the min.
     * @param string $limit_start start point for pagination.

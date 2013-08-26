@@ -185,7 +185,7 @@ class Controller
    }
 
    /**
-    * index action /index, /index.htm, /index.html
+    * Start Page
     *
     * @return void.
     */
@@ -195,7 +195,7 @@ class Controller
    }
 
    /**
-    * results action /results, /results(anything)
+    * Action to show a paginated list of wines.
     *
     * @return void.
     */
@@ -267,6 +267,10 @@ class Controller
              * $this->winesearch    from $_GET['winesearch'] request.
              * $this->winerysearch  from $_GET['winerysearch'] request.
              * $selectsearch        from select box $_GET requests.
+             * $this->wine_year_lo  $_GET['wine_year_lo'] request.
+             * $this->wine_year_hi  $_GET['wine_year_hi'] request.
+             * $this->min_cost      $_GET['min_cost'] request.
+             * $this->max_cost      $_GET['max_cost'] request..
              * $this->limit_start   $_GET['next'] request.
              * $this->limit_end     from DEFAULT_TOTAL_LIMIT which is 30.
              */
@@ -308,7 +312,8 @@ class Controller
    }
 
    /**
-    * 
+    * Action to show information for a
+    * particular Wine via wine_id.
     *
     * @return void.
     */
@@ -337,7 +342,8 @@ class Controller
    }
 
    /**
-    * 404 missing action /404.shtml, /404(anything)
+    * 404 missing action to redirect
+    * users who are lost.
     *
     * @return void.
     */
