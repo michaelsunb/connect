@@ -66,10 +66,21 @@ class Controller
       $this->grape_variety_results = $this->model_grape_varity->query_grape_variety();
 
       /** Get $_GET requests and check if they are numbers. */
-      $this->wine_year = 0;
-      if(isset($_GET['wine_year']) && preg_match("/^[0-9]+$/", $_GET['wine_year']))
+      $this->wine_year_lo = 0;
+      if(isset($_GET['wine_year_lo']) && preg_match("/^[0-9]+$/", $_GET['wine_year_lo']))
       {
-         $this->wine_year = $_GET['wine_year'];
+         $this->wine_year_lo = $_GET['wine_year_lo'];
+      }
+      $this->wine_year_hi = 0;
+      if(isset($_GET['wine_year_hi']) && preg_match("/^[0-9]+$/", $_GET['wine_year_hi']))
+      {
+         $this->wine_year_hi = $_GET['wine_year_hi'];
+      }
+      $this->html_year_error = "";
+      if($this->wine_year_lo > $this->wine_year_hi)
+      {
+         $this->html_year_error =
+            '<span style="color:red;">Low year must be lower than High year.</span>';
       }
       
       /** Get $_GET requests and check if they are numbers. */
@@ -152,7 +163,8 @@ class Controller
 
       /** Add above $_GET requests to string for html link. */
       $this->add_gets = 'region='.$this->region;
-      $this->add_gets .= '&amp;wine_year='.$this->wine_year;
+      $this->add_gets .= '&amp;wine_year_lo='.$this->wine_year_lo;
+      $this->add_gets .= '&amp;wine_year_hi='.$this->wine_year_hi;
       $this->add_gets .= '&amp;grape_variety='.$this->grape_variety;
       $this->add_gets .= '&amp;min_cost='.$this->min_cost;
       $this->add_gets .= '&amp;max_cost='.$this->max_cost;
@@ -233,11 +245,6 @@ class Controller
        * the value is the user input select.
        */
       $selectsearch = array();
-      if($this->wine_year != 0)
-      {
-         $table_column = '`wine`.`year`';
-         $selectsearch[$table_column] = $this->wine_year;
-      }
       if($this->region != 0)
       {
          $table_column = '`winery`.`region_id`';
@@ -263,8 +270,16 @@ class Controller
              * $this->limit_start   $_GET['next'] request.
              * $this->limit_end     from DEFAULT_TOTAL_LIMIT which is 30.
              */
-            $this->model_winevariety->search_wine_name($this->winesearch,$this->winerysearch,$selectsearch, 
-               $this->column,$this->min_cost,$this->max_cost,$this->limit_start, $this->limit_end);
+            $this->model_winevariety->search_wine_name($this->winesearch,
+               $this->winerysearch,
+               $selectsearch, 
+               $this->column,
+               $this->wine_year_lo,
+               $this->wine_year_hi,
+               $this->min_cost,
+               $this->max_cost,
+               $this->limit_start,
+               $this->limit_end);
 
          foreach($this->wine_results as $key=>$value)
          {

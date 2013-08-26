@@ -11,8 +11,10 @@
 
       </div>
       <div>
-      Wine Year: 
-      <? Helpers::select("wine_year",$this->wine_year_results,array('year','year'),$this->wine_year,SELECT_ALL_TOP); ?>
+      Wine Year:
+      Low: <? Helpers::select("wine_year_lo",$this->wine_year_results,array('year','year'),$this->wine_year_lo,SELECT_ALL_TOP); ?> | 
+      HI: <? Helpers::select("wine_year_hi",$this->wine_year_results,array('year','year'),$this->wine_year_hi,SELECT_ALL_TOP); ?>
+      <?= $this->html_year_error; ?>
 
       </div>
       <div>
@@ -36,11 +38,11 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
          <tr>
             <th><a href="results.html<?= $this->html_column; ?>6">id</a></th>
             <th><a href="results.html<?= $this->html_column; ?>0">Wine</a></th>
-            <th>Grape Variety</th>
+            <th><a href="results.html<?= $this->html_column; ?>8">Grape Variety</a></th>
             <th><a href="results.html<?= $this->html_column; ?>1">Year</a></th>
             <th><a href="results.html<?= $this->html_column; ?>2">Wine Type</a></th>
             <th><a href="results.html<?= $this->html_column; ?>3">Winery Name</a></th>
-            <th>Region</th>
+            <th><a href="results.html<?= $this->html_column; ?>7">Region</a></th>
             <th><a href="results.html<?= $this->html_column; ?>4">On Hand</a></th>
             <th><a href="results.html<?= $this->html_column; ?>5">Cost</a></th>
             <th>Total<br />Stock Sold</th>
@@ -66,19 +68,16 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
 
    foreach($this->wine_results as $row)
    {
-      $region_row = Helpers::inArrays($this->region_results,$row['region_id'],'region_id');
-      $variety_row = Helpers::inArrays($this->grape_variety_results,$row['variety_id'],'variety_id');
-
       echo "\n";
       ?>
          <tr>
             <td><a href="wineinfo.html?wine_id=<?= $row['wine_id']; ?>"><?= $row['wine_id']; ?></a></td>
             <td><?= $row['wine_name']; ?></td>
-            <td><?= $variety_row['variety']; ?></td>
+            <td><?= $row['variety']; ?></td>
             <td><?= $row['year']; ?></td>
             <td><?= $row['wine_type']; ?></td>
             <td><?= $row['winery_name']; ?></td>
-            <td><?= $region_row['region_name']; ?></td>
+            <td><?= $row['region_name']; ?></td>
             <td><?= $row['on_hand']; ?></td>
             <td>$<?= $row['cost']; ?></td>
             <td><?= $row['total_qty']; ?></td>

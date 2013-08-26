@@ -11,8 +11,10 @@
 
       </div>
       <div>
-      Wine Year: 
-      <? Helpers::select("wine_year",$this->wine_year_results,array('year','year'),$this->wine_year,SELECT_ALL_TOP); ?>
+      Wine Year:
+      Low: <? Helpers::select("wine_year_lo",$this->wine_year_results,array('year','year'),$this->wine_year_lo,SELECT_ALL_TOP); ?> | 
+      HI: <? Helpers::select("wine_year_hi",$this->wine_year_results,array('year','year'),$this->wine_year_hi,SELECT_ALL_TOP); ?>
+      <?= $this->html_year_error; ?>
 
       </div>
       <div>
