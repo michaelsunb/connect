@@ -9,8 +9,6 @@ require_once('model_customer.php');
 require_once('helpers.php');
 
 DEFINE("DEFAULT_ORDER_COLUMN",0);
-DEFINE("COLUMN_TOTAL_STOCK_SOLD",9);
-DEFINE("COLUMN_TOTAL_SALES_REVENUE",10);
 
 class Controller
 {
@@ -26,9 +24,12 @@ class Controller
       $action = '_'.$actions.'Action';
       $this->$action();
 
+      /** Store the view file in a internal buffer */
       ob_start();
       require_once($_SERVER['DOCUMENT_ROOT'] . $_SERVER["ASSIGN_PATH"] .$file_name);
+      /** Internal buffer copied to a variable string */
       $contents = ob_get_contents();
+      /** Discard the buffer contents */
       ob_end_clean();
 
       return $contents;
@@ -114,6 +115,7 @@ class Controller
          }
       }
 
+      /** Show error if min ocst is greater than max cost */
       $this->html_cost_error = "";
       if($this->min_cost > $this->max_cost)
       {

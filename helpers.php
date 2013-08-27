@@ -11,7 +11,7 @@ class Helpers
     *
     * @param string $id          string id of html select.
     * @param array $options      array from maybe query.
-    * @param array $value_name   MUST be 2 arrays with name of
+    * @param array $value_name   MUST be 2 arrays with key and name.
     *                            $options SELECT_VALUE e.g. $row['id']
     *                            and $options SELECT_NAME e.g. $rom['value'].
     * @param int $selected_id    html option to be selected.
@@ -55,55 +55,5 @@ class Helpers
       
       echo $html;
       ?></select><?php
-   }
-
-   /**
-    * Search a row in an array with a key
-    *
-    * @param array $haystack  The array we'll be searching through.
-    * @param string $needle   The value we're comparing.
-    * @param string $key      The key value for the row.
-    * @return array|null      returns the row or null.
-    */
-   static public function inArrays($haystack,$needle,$key='id')
-   {
-      foreach($haystack as $row)
-      {
-         if($row[$key] == $needle)
-         {
-            return $row;
-         }
-      }
-      return null;
-   }
-
-   /**
-    * http://www.php.net/manual/en/function.asort.php
-    * Sorting 2D arrays
-    *
-    * @param array $records   Query results.
-    * @param string $field    the key name.
-    * @param bool $key        If you wish to reverse it.
-    * @return array|null      returns the row or null.
-    */
-   static public function record_sort($records, $field, $reverse=false)
-   {
-       $hash = array();
-      
-       foreach($records as $record)
-       {
-           $hash[] = $record[$field];
-       }
-      
-       ($reverse)? arsort($hash) : asort($hash);
-      
-       $new_records = array();
-      
-       foreach($hash as $record)
-       {
-           $new_records []= Helpers::inArrays($records,$record,$field);
-       }
-      
-       return $new_records;
    }
 }

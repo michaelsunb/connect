@@ -88,6 +88,7 @@ abstract class ModelAbstract
       return $row;
    }
 
+   /** Destructor called at the end of the class. */
    public function __destruct()
    {
       if($this->result != null)

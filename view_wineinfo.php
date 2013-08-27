@@ -103,7 +103,7 @@
                      <td><?= $row['phone']; ?></td>
                      <td><?= $row['birth_date']; ?></td>
                      <td><?= $row['qty']; ?></td>
-                     <td><?= $row['price']; ?></td>
+                     <td>$<?= $row['price']; ?></td>
                      <td><?= $row['instructions']; ?></td>
                   </tr><?
             }

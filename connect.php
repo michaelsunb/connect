@@ -50,6 +50,7 @@ class connect
       }
    }
 
+   /** Destructor called at the end of the class. */
    public function __destruct()
    {
       // close connection
