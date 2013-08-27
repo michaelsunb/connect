@@ -186,11 +186,14 @@ class Controller
       $this->add_gets .= '&amp;winesearch='.str_replace(' ', '%20', $this->winesearch);
       $this->add_gets .= '&amp;winerysearch='.str_replace(' ', '%20', $this->winerysearch);
 
-      /** Add columns to add_gets. */
-      $this->add_gets .= '&amp;column='.$this->column;
-
       /** Add limits to add_gets. */
       $this->add_gets .= '&amp;limit='.$this->limits;
+
+      /** Create url for columns. */
+      $this->html_column = '?'.$this->add_gets.'&amp;column=';
+
+      /** Add columns to add_gets. */
+      $this->add_gets .= '&amp;column='.$this->column;
 
       /** Format html a href link. */
       $this->html_nxt_link = '<a href="'.$_SERVER["ASSIGN_PATH"].'index.html">reset search</a><br />';
@@ -305,18 +308,17 @@ class Controller
          $this->html_prv_link = '<a href="?next='.$this->prev_link.'&amp;'.$this->add_gets.'">&lt;&lt; Previous</a>';
       }
 
-      /** Create url for columns. */
-      $this->html_column = '?'.$this->add_gets.'&amp;column=';
-
+      /** Remove limit link in add_gets because we will add a new one. */
+      $add_gets = preg_replace('/\&amp;limit=[0-9]{0,2}/', "", $this->add_gets);
       /** Create limits for pagination table. */
       $this->html_limits = '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
-         $this->add_gets.'&amp;limit=5">5</a>, ';
+         $add_gets.'&amp;limit=5">5</a>, ';
       $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
-         $this->add_gets.'&amp;limit=10">10</a>, ';
+         $add_gets.'&amp;limit=10">10</a>, ';
       $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
-         $this->add_gets.'&amp;limit=15">15</a>, ';
+         $add_gets.'&amp;limit=15">15</a>, ';
       $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
-         $this->add_gets.'&amp;limit=30">30</a>';
+         $add_gets.'&amp;limit=30">30</a>';
    }
 
    /**
