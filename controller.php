@@ -9,6 +9,8 @@ require_once('model_customer.php');
 require_once('helpers.php');
 
 DEFINE("DEFAULT_ORDER_COLUMN",0);
+DEFINE("COLUMN_TOTAL_STOCK_SOLD",9);
+DEFINE("COLUMN_TOTAL_SALES_REVENUE",10);
 
 class Controller
 {
@@ -156,7 +158,8 @@ class Controller
       }
 
       $this->column = DEFAULT_ORDER_COLUMN;
-      if(isset($_GET['column']) && preg_match("/^[0-9]{1}$/", $_GET['column']))
+      /** allow for 2 numbers */
+      if(isset($_GET['column']) && preg_match("/^[0-9]{0,2}$/", $_GET['column']))
       {
          $this->column = $_GET['column'];
       }
@@ -284,12 +287,6 @@ class Controller
                $this->max_cost,
                $this->limit_start,
                $this->limit_end);
-
-         foreach($this->wine_results as $key=>$value)
-         {
-            /** Add total orders to array. */
-            $this->wine_results[$key] += $this->model_orders->retrieve_totals($value['wine_id']);
-         }
       }
 
       /**

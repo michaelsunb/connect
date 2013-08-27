@@ -45,8 +45,8 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
             <th><a href="results.html<?= $this->html_column; ?>7">Region</a></th>
             <th><a href="results.html<?= $this->html_column; ?>4">On Hand</a></th>
             <th><a href="results.html<?= $this->html_column; ?>5">Cost</a></th>
-            <th>Total<br />Stock Sold</th>
-            <th>Total<br />Sales Revenue</th>
+            <th><a href="results.html<?= $this->html_column; ?>9">Total<br />Stock Sold</a></th>
+            <th><a href="results.html<?= $this->html_column; ?>10">Total<br />Sales Revenue</a></th>
          </tr>
       </thead>
       <tfoot>
@@ -65,7 +65,7 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
          </tr>
       </tfoot>
       <tbody style="text-align:center;"><?
-
+   
    foreach($this->wine_results as $row)
    {
       echo "\n";

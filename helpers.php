@@ -76,4 +76,34 @@ class Helpers
       }
       return null;
    }
+
+   /**
+    * http://www.php.net/manual/en/function.asort.php
+    * Sorting 2D arrays
+    *
+    * @param array $records   Query results.
+    * @param string $field    the key name.
+    * @param bool $key        If you wish to reverse it.
+    * @return array|null      returns the row or null.
+    */
+   static public function record_sort($records, $field, $reverse=false)
+   {
+       $hash = array();
+      
+       foreach($records as $record)
+       {
+           $hash[] = $record[$field];
+       }
+      
+       ($reverse)? arsort($hash) : asort($hash);
+      
+       $new_records = array();
+      
+       foreach($hash as $record)
+       {
+           $new_records []= Helpers::inArrays($records,$record,$field);
+       }
+      
+       return $new_records;
+   }
 }

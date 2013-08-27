@@ -14,7 +14,9 @@ class ModelWineVariety extends ModelAbstract
                                        '`inventory`.`cost`',
                                        '`wine`.`wine_id`',
                                        '`region`.`region_name`',
-                                       '`grape_variety`.`variety`');
+                                       '`grape_variety`.`variety`',
+                                       '`total_qty`',
+                                       '`total_price`');
 
    /**
     * query values from join tables
@@ -51,7 +53,7 @@ class ModelWineVariety extends ModelAbstract
          $total_limit = DEFAULT_TOTAL_LIMIT)
    {
       $sql = "SELECT 
-      `wine_variety`.`id`,
+      `wine_variety`.`id`, 
       `grape_variety`.`variety`, 
       `wine`.`wine_id`, 
       `wine`.`wine_name`, 
@@ -60,14 +62,19 @@ class ModelWineVariety extends ModelAbstract
       `winery`.`winery_name`, 
       `region`.`region_name`, 
       `inventory`.`on_hand`, 
-      `inventory`.`cost` 
+      `inventory`.`cost`, 
+      SUM(`items`.`qty`) AS `total_qty`, 
+      SUM(`items`.`price`) AS `total_price` 
       FROM `wine_variety` 
       JOIN `wine` ON `wine_variety`.`wine_id`=`wine`.`wine_id` 
       JOIN `wine_type` ON `wine`.`wine_type`=`wine_type`.`wine_type_id` 
-      JOIN `winery` ON `wine`.`winery_id`=`winery`.`winery_id`  
+      JOIN `winery` ON `wine`.`winery_id`=`winery`.`winery_id` 
       JOIN `region` ON `winery`.`region_id`=`region`.`region_id` 
       JOIN `inventory` ON `wine`.`wine_id`=`inventory`.`wine_id` 
       JOIN `grape_variety` ON `wine_variety`.`variety_id`=`grape_variety`.`variety_id` 
+      JOIN `items` ON `wine`.`wine_id` = `items`.`wine_id` 
+      JOIN `orders` ON `items`.`order_id` = `orders`.`order_id` 
+                    AND `items`.`cust_id` = `orders`.`cust_id` 
       WHERE `wine`.`wine_name` LIKE '%" . $wine_name ."%' 
       AND `winery`.`winery_name` LIKE '%" . $winery_name ."%'";
 
@@ -98,11 +105,20 @@ class ModelWineVariety extends ModelAbstract
          }
       }
 
-      $sql .= "
-      GROUP BY `wine`.`year`, `wine`.`wine_name`
-      ORDER BY ". $this::$order_column[$order] ." ASC
-      LIMIT " . $limit_start . ", " . $total_limit;
+      $order_query = '`wine`.`wine_name`';
+      if(count($this::$order_column) > $order)
+      {
+         $order_query = $this::$order_column[$order];
+      }
 
+      $sql .= "
+      GROUP BY `wine`.`year`, 
+      `wine`.`wine_name`, 
+      `grape_variety`.`variety`,
+      `wine`.`wine_id`
+      ORDER BY ". $order_query ." ASC
+      LIMIT " . $limit_start . ", " . $total_limit;
+//echo $sql;
       return $this->retrieve_all($sql);
    }
 }
