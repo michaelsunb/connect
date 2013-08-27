@@ -480,14 +480,17 @@ class Controller
       $this->wine_info = $this->model_wine->query_single_wine_id($this->wine_id);
 
       /** Set the wine results into minitemplator */
-      $this->mini_t->setVariable('wine_info_wine_id', $this->wine_info['wine_id']);
-      $this->mini_t->setVariable('wine_info_wine_name', $this->wine_info['wine_name']);
-      $this->mini_t->setVariable('wine_info_year', $this->wine_info['year']);
-      $this->mini_t->setVariable('wine_info_wine_type', $this->wine_info['wine_type']);
-      $this->mini_t->setVariable('wine_info_winery_name', $this->wine_info['winery_name']);
-      $this->mini_t->setVariable('wine_info_region_name', $this->wine_info['region_name']);
-      $this->mini_t->setVariable('wine_info_on_hand', $this->wine_info['on_hand']);
-      $this->mini_t->setVariable('wine_info_cost', $this->wine_info['cost']);
+      foreach($this->wine_info as $rows)
+      {
+         $this->mini_t->setVariable('wine_info_wine_id', $rows['wine_id']);
+         $this->mini_t->setVariable('wine_info_wine_name', $rows['wine_name']);
+         $this->mini_t->setVariable('wine_info_year', $rows['year']);
+         $this->mini_t->setVariable('wine_info_wine_type', $rows['wine_type']);
+         $this->mini_t->setVariable('wine_info_winery_name', $rows['winery_name']);
+         $this->mini_t->setVariable('wine_info_region_name', $rows['region_name']);
+         $this->mini_t->setVariable('wine_info_on_hand', $rows['on_hand']);
+         $this->mini_t->setVariable('wine_info_cost', $rows['cost']);
+      }
 
       /** Multiple results. */
       $this->wine_info_grapes = $this->model_grape_varity->search_wine_id($this->wine_id);
