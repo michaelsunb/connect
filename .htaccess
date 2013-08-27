@@ -6,32 +6,32 @@ RewriteEngine On
 RewriteBase /
 
 # Set this to use in the php code $_SERVER['ASSIGN_PATH']
-SetEnv ASSIGN_PATH /assign1/partc/
+SetEnv ASSIGN_PATH /assign1/partd/
 
 # http://httpd.apache.org/docs/2.2/rewrite/flags.html
 # [QSA] maps a request e.g. /index/123 to /index.php?page=123
 # [R] HTTP redirect
 # [L] causes no further rules to be processed
 
-RewriteRule ^model_([A-Za-z]+)(.*)$ /assign1/partc/404.shtml  [R,L]
-RewriteRule ^view_([A-Za-z0-9]+)(.*)$ /assign1/partc/404.shtml  [R,L]
-RewriteRule ^controller.php$ /assign1/partc/404.shtml  [R,L]
-RewriteRule ^connect.php$ /assign1/partc/404.shtml  [R,L]
-RewriteRule ^db.php$ /assign1/partc/404.shtml  [R,L]
-RewriteRule ^README.md$ /assign1/partc/404.shtml  [R,L]
+RewriteRule ^model_([A-Za-z]+)(.*)$ /assign1/partd/404.shtml  [R,L]
+RewriteRule ^view_([A-Za-z0-9]+)(.*)$ /assign1/partd/404.shtml  [R,L]
+RewriteRule ^controller.php$ /assign1/partd/404.shtml  [R,L]
+RewriteRule ^connect.php$ /assign1/partd/404.shtml  [R,L]
+RewriteRule ^db.php$ /assign1/partd/404.shtml  [R,L]
+RewriteRule ^README.md$ /assign1/partd/404.shtml  [R,L]
 
 # Custom 404 errors
-ErrorDocument 404 /assign1/partc/404.shtml
+ErrorDocument 404 /assign1/partd/404.shtml
 
 # To create a action:
 # - create a RewriteRule with the action mapping 
-#   to /assign1/partc/index.php with [QSA,L]
+#   to /assign1/partd/index.php with [QSA,L]
 # - create a view file named view_(action name).php
 # - create a protected action funtion in the controller
 #   named (action name)Action()
 
-RewriteRule ^index.html?$ /assign1/partc/index.php [QSA,L]
-RewriteRule ^results(.*)$ /assign1/partc/index.php [QSA,L]
-RewriteRule ^wineinfo(.*)$ /assign1/partc/index.php [QSA,L]
-RewriteRule ^test(.*)$ /assign1/partc/index.php [QSA,L]
-RewriteRule ^404(.*)$ /assign1/partc/index.php [QSA,L]
+RewriteRule ^index.html?$ /assign1/partd/index.php [QSA,L]
+RewriteRule ^results(.*)$ /assign1/partd/index.php [QSA,L]
+RewriteRule ^wineinfo(.*)$ /assign1/partd/index.php [QSA,L]
+RewriteRule ^test(.*)$ /assign1/partd/index.php [QSA,L]
+RewriteRule ^404(.*)$ /assign1/partd/index.php [QSA,L]

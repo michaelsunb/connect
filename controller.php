@@ -6,8 +6,6 @@ require_once('model_winevariety.php');
 require_once('model_orders.php');
 require_once('model_customer.php');
 
-require_once('helpers.php');
-
 /** Part C */
 require_once ("MiniTemplator.class.php");
 
@@ -389,6 +387,7 @@ class Controller
             $this->mini_t->setVariable('wine_id', $row['wine_id']);
             $this->mini_t->setVariable('wine_name', $row['wine_name']);
             $this->mini_t->setVariable('variety', $row['variety']);
+            $this->mini_t->setVariable('year', $row['year']);
             $this->mini_t->setVariable('wine_type', $row['wine_type']);
             $this->mini_t->setVariable('winery_name', $row['winery_name']);
             $this->mini_t->setVariable('region_name', $row['region_name']);

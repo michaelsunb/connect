@@ -59,6 +59,6 @@ class ModelOrders extends ModelAbstract
       WHERE `items`.`wine_id` = ".$wine_id."
       LIMIT 1 ";
 
-      return $this->retrieve_single($sql);
+      return $this->retrieve_all($sql);
    }
 }

@@ -20,6 +20,6 @@ class ModelCustomer extends ModelAbstract
       WHERE `customer`.`cust_id` = " . $cust_id ."
       LIMIT 1";
 
-      return $this->retrieve_single($sql);
+      return $this->retrieve_all($sql);
    }
 }

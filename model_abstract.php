@@ -1,12 +1,12 @@
 <?php
-require_once('connect.php');
+require_once('db.php');
 
 abstract class ModelAbstract
 {
    /**
-    * @var results from executed query
+    * @var db PDO model
     */
-   protected $result = null;
+   private static $db = null;
 
    /**
     * connect to connect singleton for open
@@ -14,7 +14,19 @@ abstract class ModelAbstract
     */
    public function __construct()
    {
-      connect::singleton();
+      if(!self::$db)
+      {
+         try
+         {
+            $dsn = DB_ENGINE .':host='. DB_HOST .';dbname='. DB_NAME;
+            self::$db = new PDO($dsn, DB_USER, DB_PW);
+         }
+         catch(PDOException $e)
+         { 
+            die("PDO CONNECTION ERROR: " . $e->getMessage() . "<br/>");
+         }
+      }
+      return self::$db;  
    }
 
    /**
@@ -48,54 +60,12 @@ abstract class ModelAbstract
       {
          return $results;
       }
-      
-      $this->result = mysql_query($valid_sql);
-      
-      if($this->result)
+
+      foreach(self::$db->query($valid_sql) as $row)
       {
-         while($row = mysql_fetch_assoc($this->result))
-         {
-            $results[] = $row;
-         }
+         $results[] = $row;
       }
       
       return $results;
-   }
-
-   /**
-    * Common retrieve a single result from sql query
-    *
-    * @param string $sql   sql query.
-    * @return array        returns sql single result.
-    */
-   public function retrieve_single($sql)
-   {
-      $row = null;
-
-      $valid_sql = $this->verify_sql($sql);
-      if($valid_sql == null)
-      {
-         return $results;
-      }
-
-      $this->result = mysql_query($valid_sql);
-      
-      if($this->result)
-      {
-         $row = mysql_fetch_assoc($this->result);
-      }
-      
-      return $row;
-   }
-
-   /** Destructor called at the end of the class. */
-   public function __destruct()
-   {
-      if($this->result != null)
-      {
-         // free result set memory
-         mysql_free_result($this->result);
-         unset($this->result);
-      }
-   }   
+   } 
 }
