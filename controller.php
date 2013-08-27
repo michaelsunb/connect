@@ -160,14 +160,14 @@ class Controller
       }
 
       $this->column = DEFAULT_ORDER_COLUMN;
-      /** allow for 2 numbers */
+      /** Allow for 2 numbers. */
       if(isset($_GET['column']) && preg_match("/^[0-9]{0,2}$/", $_GET['column']))
       {
          $this->column = $_GET['column'];
       }
 
       $this->limits = DEFAULT_TOTAL_LIMIT;
-      /** allow for 2 numbers */
+      /** Allow for 2 numbers with a maximum of 30. */
       if(isset($_GET['limit']) && preg_match("/^[0-9]{0,2}$/", $_GET['limit'])
        && $_GET['limit'] <= DEFAULT_TOTAL_LIMIT )
       {
@@ -186,20 +186,11 @@ class Controller
       $this->add_gets .= '&amp;winesearch='.str_replace(' ', '%20', $this->winesearch);
       $this->add_gets .= '&amp;winerysearch='.str_replace(' ', '%20', $this->winerysearch);
 
-      /** Create url for columns. */
-      $this->html_column = '?'.$this->add_gets.'&amp;column=';
-
       /** Add columns to add_gets. */
       $this->add_gets .= '&amp;column='.$this->column;
 
-      /** Create limits for a table. */
-      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=5">5</a>, ';
-      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=10">10</a>, ';
-      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=15">15</a>, ';
-      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=30">30</a>';
-
-      /** Add columns to add_gets. */
-      $this->add_gets .= '&amp;column='.$this->column;
+      /** Add limits to add_gets. */
+      $this->add_gets .= '&amp;limit='.$this->limits;
 
       /** Format html a href link. */
       $this->html_nxt_link = '<a href="'.$_SERVER["ASSIGN_PATH"].'index.html">reset search</a><br />';
@@ -282,7 +273,7 @@ class Controller
              * $this->min_cost      $_GET['min_cost'] request.
              * $this->max_cost      $_GET['max_cost'] request..
              * $this->limit_start   $_GET['next'] request.
-             * $this->limit_end     from DEFAULT_TOTAL_LIMIT which is 30.
+             * $this->limits     from DEFAULT_TOTAL_LIMIT which is 30.
              */
             $this->model_winevariety->search_wine_name($this->winesearch,
                $this->winerysearch,
@@ -313,6 +304,19 @@ class Controller
       {
          $this->html_prv_link = '<a href="?next='.$this->prev_link.'&amp;'.$this->add_gets.'">&lt;&lt; Previous</a>';
       }
+
+      /** Create url for columns. */
+      $this->html_column = '?'.$this->add_gets.'&amp;column=';
+
+      /** Create limits for pagination table. */
+      $this->html_limits = '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
+         $this->add_gets.'&amp;limit=5">5</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
+         $this->add_gets.'&amp;limit=10">10</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
+         $this->add_gets.'&amp;limit=15">15</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
+         $this->add_gets.'&amp;limit=30">30</a>';
    }
 
    /**

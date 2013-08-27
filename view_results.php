@@ -4,6 +4,7 @@
       Region: 
       <? Helpers::select("region",$this->region_results,array('region_id','region_name'),$this->region); ?>
 
+      <input type="hidden" name="limit" value="<?= $this->limits; ?>">
       </div>
       <div>
       Grape Variety: 
