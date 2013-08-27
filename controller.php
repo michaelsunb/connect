@@ -192,7 +192,7 @@ class Controller
       /** Add columns to add_gets. */
       $this->add_gets .= '&amp;column='.$this->column;
 
-      /** Add columns to add_gets. */
+      /** Create limits for a table. */
       $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=5">5</a>, ';
       $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=10">10</a>, ';
       $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=15">15</a>, ';
