@@ -6,6 +6,9 @@ require_once('model_winevariety.php');
 require_once('model_orders.php');
 require_once('model_customer.php');
 
+      require_once('twitteroauth/twitteroauth.php');
+      require_once('config.php');
+
 /** Part C */
 require_once ("MiniTemplator.class.php");
 
@@ -589,6 +592,23 @@ class Controller
          header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
          exit;
       }
+      
+      if(isset($_POST['tweet']))
+      {
+         $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
+ 
+         /* Get temporary credentials. */
+         $temporary_credentials = $connection->getRequestToken(OAUTH_CALLBACK);
+
+         $_SESSION['oauth_token'] =  $temporary_credentials['oauth_token'];
+         $_SESSION['oauth_token_secret'] = $temporary_credentials['oauth_token_secret'];
+
+         /* Save temporary credentials to session. */
+         $redirect_url = $connection->getAuthorizeURL($temporary_credentials['oauth_token'], FALSE);
+
+         /* Create a TwitterOauth object with consumer/user tokens. */
+         header('location:'.$redirect_url);
+      }
 
       $this->commonActions();
 
@@ -602,6 +622,64 @@ class Controller
          /** Put into block so that we can use foreach loop */
          $this->mini_t->addBlock("wine_name_block");
       }
+   }
+
+   /**
+    * 404 missing action to redirect
+    * users who are lost.
+    *
+    * @return void.
+    */
+   protected function _tweetAction()
+   {
+      $ine_viewed = array();
+      if(count($_SESSION['wine_viewed']) > 0)
+      {
+         $wine_viewed = $_SESSION['wine_viewed'];
+      }
+      else
+      {
+         header("HTTP/1.0 404 Not Found");
+         header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
+         exit;
+      }
+
+      $this->commonActions();
+
+      /* Create a TwitterOauth object with consumer/user tokens. */
+      $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $_SESSION['oauth_token'], 
+         $_SESSION['oauth_token_secret']);
+         
+      $token_credentials = $connection->getAccessToken($_REQUEST['oauth_verifier']);
+      
+      unset($_SESSION['oauth_token']);
+      unset($_SESSION['oauth_token_secret']);
+      
+      $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $token_credentials['oauth_token'],
+         $token_credentials['oauth_token_secret']);
+
+      /** Multiple results. */
+      $wines = $this->model_wine->query_wine_in_id($wine_viewed);
+      $tweet = '';
+      $add_comma = false;
+      foreach($wines as $rows)
+      {
+         if($add_comma)
+         {
+            $tweet .= ", ";
+         }
+         $add_comma = true;
+         $tweet .= $rows['wine_name'];
+      }
+      if(strlen($tweet) >= 140)
+      {
+         $tweet = substr($tweet, 0, 137) . "...";
+      }
+      $content = $connection->post('statuses/update', array('status' => $tweet));
+      //$content = $connection->get('account/verify_credentials');
+      //print_r($content);
+      header('location:'.$_SERVER["ASSIGN_PATH"].'session_viewed.html');
+      exit;
    }
 
    /**
