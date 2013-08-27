@@ -106,9 +106,9 @@ class ModelWineVariety extends ModelAbstract
       }
 
       $order_query = '`wine`.`wine_name`';
-      if(count($this::$order_column) > $order)
+      if(count(self::$order_column) > $order)
       {
-         $order_query = $this::$order_column[$order];
+         $order_query = self::$order_column[$order];
       }
 
       $sql .= "
@@ -118,7 +118,7 @@ class ModelWineVariety extends ModelAbstract
       `wine`.`wine_id`
       ORDER BY ". $order_query ." ASC
       LIMIT " . $limit_start . ", " . $total_limit;
-//echo $sql;
+
       return $this->retrieve_all($sql);
    }
 }

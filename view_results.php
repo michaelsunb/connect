@@ -51,12 +51,12 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
       </thead>
       <tfoot>
          <tr>
-            <td>&nbsp;</td>
             <td><?= $this->html_prv_link; ?></td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
+            <td style="text-align:center;"><?= $this->html_limits; ?></td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>

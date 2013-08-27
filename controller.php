@@ -166,6 +166,14 @@ class Controller
          $this->column = $_GET['column'];
       }
 
+      $this->limits = DEFAULT_TOTAL_LIMIT;
+      /** allow for 2 numbers */
+      if(isset($_GET['limit']) && preg_match("/^[0-9]{0,2}$/", $_GET['limit'])
+       && $_GET['limit'] <= DEFAULT_TOTAL_LIMIT )
+      {
+         $this->limits = $_GET['limit'];
+      }
+
       /** Add above $_GET requests to string for html link. */
       $this->add_gets = 'region='.$this->region;
       $this->add_gets .= '&amp;wine_year_lo='.$this->wine_year_lo;
@@ -180,6 +188,15 @@ class Controller
 
       /** Create url for columns. */
       $this->html_column = '?'.$this->add_gets.'&amp;column=';
+
+      /** Add columns to add_gets. */
+      $this->add_gets .= '&amp;column='.$this->column;
+
+      /** Add columns to add_gets. */
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=5">5</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=10">10</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=15">15</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'&amp;limit=30">30</a>';
 
       /** Add columns to add_gets. */
       $this->add_gets .= '&amp;column='.$this->column;
@@ -217,31 +234,19 @@ class Controller
          (isset($_GET['next']) && $_GET['next'] <= 0) ||
          (isset($_GET['next']) && !preg_match("/^[0-9]+$/", $_GET['next'])))
       {
-         /**
-          * Default sql total number of results per page.
-          * TODO: change variable name
-          */
-         $this->limit_end = DEFAULT_TOTAL_LIMIT;
-         
          /** Default html links. */
          $this->prev_link = DEFAULT_START_LIMIT;
-         $this->next_link = DEFAULT_END_LIMIT;
+         $this->next_link = $this->limits;
       }
       /** otherwise put $_GET next request into sql and html strings. */
       else
       {
-         /**
-          * Sql total number of results per page.
-          * TODO: change variable name and allow 5, 10, 15, 30 results.
-          */
-         $this->limit_end = DEFAULT_TOTAL_LIMIT;
-         
          // User input sql starting from row in table.
          $this->limit_start = $_GET['next'];
 
          // User input html next and previous links
-         $this->prev_link = $_GET['next'] - ADD_TO_LIMIT;
-         $this->next_link = $_GET['next'] + ADD_TO_LIMIT;
+         $this->prev_link = $_GET['next'] - $this->limits;
+         $this->next_link = $_GET['next'] + $this->limits;
       }
       
       /**
@@ -288,7 +293,7 @@ class Controller
                $this->min_cost,
                $this->max_cost,
                $this->limit_start,
-               $this->limit_end);
+               $this->limits);
       }
 
       /**
@@ -297,7 +302,7 @@ class Controller
        * the total number of results limit set from 
        * the sql query.
        */
-      if(count($this->wine_results) == $this->limit_end)
+      if(count($this->wine_results) == $this->limits)
       {
          $this->html_nxt_link = '<a href="?next='.$this->next_link .'&amp;'.$this->add_gets.'">Next &gt;&gt;</a>';
       }
