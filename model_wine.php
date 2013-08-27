@@ -60,4 +60,35 @@ class ModelWine extends ModelAbstract
 
       return $this->retrieve_all($sql);
    }
+
+   /**
+    * query values from wine
+    *
+    * @param array $wine_name   id of the wine.
+    * @return array              return wine_id, year and wine_name
+    *                            array from wine table.
+    */
+   public function query_wine_in_id($wine_ids)
+   {
+      $sql_in = "(";
+      $add_comma = false;
+      foreach($wine_ids as $row)
+      {
+         if($add_comma)
+         {
+            $sql_in .= ",";
+         }
+         $add_comma = true;
+         $sql_in .= $row;
+      }
+      $sql_in .= ")";
+
+      $sql = "select 
+      `wine`.`wine_id`, 
+      `wine`.`wine_name`
+      from `wine`
+      where `wine`.`wine_id` IN " . $sql_in . "";
+
+      return $this->retrieve_all($sql);
+   }
 }

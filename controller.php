@@ -295,6 +295,33 @@ class Controller
    protected function _indexAction()
    {
       $this->commonActions();
+
+      $html_session = '<h3><a href="index.html?cancel_session=true">Cancel Session</a></h3>';
+      if(isset($_GET['start_session']))
+      {
+         $_SESSION['start_session'] = true;
+         $_SESSION['wine_viewed'] = array();
+         header('location:'.$_SERVER["ASSIGN_PATH"].'index.html');
+         exit;
+      }
+      elseif(isset($_GET['cancel_session']))
+      {
+         unset($_SESSION['start_session']);
+         unset($_SESSION['wine_viewed']);
+         header('location:'.$_SERVER["ASSIGN_PATH"].'index.html');
+      }
+      elseif(!isset($_SESSION['start_session']) ||
+      isset($_SESSION['start_session']) && $_SESSION['start_session'] == false)
+      {
+         $html_session = '<h3><a href="index.html?start_session=true">Start Session</a></h3>';
+      }
+      
+      if(isset($_SESSION['wine_viewed']) && count($_SESSION['wine_viewed']) > 0)
+      {
+         $html_session .= '<p><a href="session_viewed.html">View Previous Session</a></p>';
+      }
+
+      $this->mini_t->setVariable("html_session",$html_session);
    }
 
    /**
@@ -452,6 +479,26 @@ class Controller
 
       /** Put limits in the view for hidden element */
       $this->mini_t->setVariable('limits', $this->limits);
+
+      $html_session = '<h3></h3>';
+      if(isset($_GET['start_session']))
+      {
+         $_SESSION['start_session'] = false;
+         header('location:session_viewed.html');
+         exit;
+      }
+      elseif(isset($_SESSION['start_session']) && $_SESSION['start_session'] == true)
+      {
+         $html_session = 
+         '<h3><a href="results.html?'. $_SERVER['QUERY_STRING'] .'&amp;start_session=true">End Session</a></h3>';
+
+         foreach($this->wine_results as $row)
+         {
+            $_SESSION['wine_viewed'] []= $row['wine_id'];
+         }
+      }
+
+      $this->mini_t->setVariable("html_session",$html_session);
    }
 
    /**
@@ -480,14 +527,17 @@ class Controller
       $this->wine_info = $this->model_wine->query_single_wine_id($this->wine_id);
 
       /** Set the wine results into minitemplator */
-      $this->mini_t->setVariable('wine_info_wine_id', $this->wine_info['wine_id']);
-      $this->mini_t->setVariable('wine_info_wine_name', $this->wine_info['wine_name']);
-      $this->mini_t->setVariable('wine_info_year', $this->wine_info['year']);
-      $this->mini_t->setVariable('wine_info_wine_type', $this->wine_info['wine_type']);
-      $this->mini_t->setVariable('wine_info_winery_name', $this->wine_info['winery_name']);
-      $this->mini_t->setVariable('wine_info_region_name', $this->wine_info['region_name']);
-      $this->mini_t->setVariable('wine_info_on_hand', $this->wine_info['on_hand']);
-      $this->mini_t->setVariable('wine_info_cost', $this->wine_info['cost']);
+      foreach($this->wine_info as $rows)
+      {
+         $this->mini_t->setVariable('wine_info_wine_id', $rows['wine_id']);
+         $this->mini_t->setVariable('wine_info_wine_name', $rows['wine_name']);
+         $this->mini_t->setVariable('wine_info_year', $rows['year']);
+         $this->mini_t->setVariable('wine_info_wine_type', $rows['wine_type']);
+         $this->mini_t->setVariable('wine_info_winery_name', $rows['winery_name']);
+         $this->mini_t->setVariable('wine_info_region_name', $rows['region_name']);
+         $this->mini_t->setVariable('wine_info_on_hand', $rows['on_hand']);
+         $this->mini_t->setVariable('wine_info_cost', $rows['cost']);
+      }
 
       /** Multiple results. */
       $this->wine_info_grapes = $this->model_grape_varity->search_wine_id($this->wine_id);
@@ -518,6 +568,39 @@ class Controller
          $this->mini_t->setVariable('wine_info_price', $rows['price']);
          $this->mini_t->setVariable('wine_info_instructions', $rows['instructions']);
          $this->mini_t->addBlock("wine_info_pagination_block");
+      }
+   }
+
+   /**
+    * .
+    *
+    * @return void.
+    */
+   protected function _session_viewedAction()
+   {
+      $ine_viewed = array();
+      if(count($_SESSION['wine_viewed']) > 0)
+      {
+         $wine_viewed = $_SESSION['wine_viewed'];
+      }
+      else
+      {
+         header("HTTP/1.0 404 Not Found");
+         header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
+         exit;
+      }
+
+      $this->commonActions();
+
+      /** Multiple results. */
+      $wines = $this->model_wine->query_wine_in_id($wine_viewed);
+      foreach($wines as $rows)
+      {
+         /** Set wine name results into minitemplator */
+         $this->mini_t->setVariable('wine_id', $rows['wine_id']);
+         $this->mini_t->setVariable('wine_name', $rows['wine_name']);
+         /** Put into block so that we can use foreach loop */
+         $this->mini_t->addBlock("wine_name_block");
       }
    }
 

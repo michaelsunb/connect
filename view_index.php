@@ -1,4 +1,4 @@
-
+   ${html_session}
    <form action="${ASSIGN_PATH}results.html" method="get">
       <div>
       Region: 
@@ -39,5 +39,6 @@
       Max Cost: <input type="search" name="max_cost" value="${max_cost}" maxlength="6" size="6">
       ${html_cost_error}
       </div>
-      <input type="submit">
+      <input type="submit"> | 
+      <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}'">
    </form>

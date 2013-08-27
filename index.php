@@ -4,7 +4,7 @@ DEFINE("DEFAULT_END_LIMIT",30);
 DEFINE("DEFAULT_TOTAL_LIMIT",30);
 
 DEFINE("ADD_TO_LIMIT",30);
-
+session_start();
 /** replace + (space) sign with \+ for preg_match */
 $query_string = str_replace('+', '\+', $_SERVER["QUERY_STRING"]);
 /** Remove any queries from the uri */
@@ -42,7 +42,7 @@ else
  * if action is alphabetical or 404
  */
 $view_script_path = 'view_'.$action.'.php';
-if(!file_exists($view_script_path) || !preg_match("/^([a-z]+|404)$/", $action))
+if(!file_exists($view_script_path) || !preg_match("/^([a-z_]+|404)$/", $action))
 {
 	header("HTTP/1.0 404 Not Found");
 	header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
