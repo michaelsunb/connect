@@ -1,34 +1,45 @@
 
-   <form action="<?= $_SERVER["ASSIGN_PATH"]; ?>results.html" method="get">
+   <form action="${ASSIGN_PATH}results.html" method="get">
       <div>
       Region: 
-      <? Helpers::select("region",$this->region_results,array('region_id','region_name'),$this->region); ?>
-
+         <select id="region" name="region"><!-- $BeginBlock region_select_block -->
+           ${select_region}<!-- $EndBlock region_select_block -->
+         </select>
       </div>
       <div>
       Grape Variety: 
-      <? Helpers::select("grape_variety",$this->grape_variety_results,array('variety_id','variety'),$this->grape_variety,SELECT_ALL_TOP); ?>
+         <select id="grape_variety" name="grape_variety">
+           <option value="0">All</option><!-- $BeginBlock grape_variety_select_block -->
+           ${select_grape_variety}<!-- $EndBlock grape_variety_select_block -->
+         </select>
 
       </div>
       <div>
-      Wine Year:
-      Low: <? Helpers::select("wine_year_lo",$this->wine_year_results,array('year','year'),$this->wine_year_lo,SELECT_ALL_TOP); ?> | 
-      HI: <? Helpers::select("wine_year_hi",$this->wine_year_results,array('year','year'),$this->wine_year_hi,SELECT_ALL_TOP); ?>
-      <?= $this->html_year_error; ?>
-
+         Wine Year:
+         Low: 
+         <select id="wine_year_lo" name="wine_year_lo">
+           <option value="0">All</option><!-- $BeginBlock year_lo_select_block -->
+           ${select_year_lo}<!-- $EndBlock year_lo_select_block -->
+         </select> | 
+         HI: 
+         <select id="wine_year_hi" name="wine_year_hi">
+           <option value="0">All</option><!-- $BeginBlock year_hi_select_block -->
+           ${select_year_hi}<!-- $EndBlock year_hi_select_block -->
+         </select>
+         ${html_year_error}
       </div>
       <div>
-      Search Wine: <input type="search" name="winesearch" value="<?= $this->winesearch; ?>">
+      Search Wine: <input type="search" name="winesearch" value="${winesearch}">
       </div>
       <div>
-      Search Winery: <input type="search" name="winerysearch" value="<?= $this->winerysearch; ?>">
+      Search Winery: <input type="search" name="winerysearch" value="${winerysearch}">
       </div>
       <div>
-      Min Cost: <input type="search" name="min_cost" value="<?= $this->min_cost; ?>" maxlength="6" size="6">
-      Max Cost: <input type="search" name="max_cost" value="<?= $this->max_cost; ?>" maxlength="6" size="6">
-      <?= $this->html_cost_error; ?>
+      Min Cost: <input type="search" name="min_cost" value="${min_cost}" maxlength="6" size="6">
+      Max Cost: <input type="search" name="max_cost" value="${max_cost}" maxlength="6" size="6">
+      ${html_cost_error}
       </div>
       <input type="submit">
    </form>
-   <p>Opps! Page not found.</p><?= $this->html_nxt_link; ?>
+   <p>Opps! Page not found.</p>${html_nxt_link}
 

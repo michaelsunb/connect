@@ -88,3 +88,4 @@
          </tr><!-- $EndBlock wine_pagination_block -->
       </tbody>
    </table>
+   ${no_records}

@@ -28,7 +28,7 @@ class Controller
     *
     * @param string $actions     Actions to select which view you want.
     * @param string $file_name   Choose a file from connect directory.
-    * @return string             return html body contents.
+    * @return void
     */
    public function init($actions,$file_name)
    {
@@ -39,7 +39,7 @@ class Controller
       $action = '_'.$actions.'Action';
       $this->$action();
 
-      return $this->mini_t->generateOutput();
+      $this->mini_t->generateOutput();
    }
 
    /**
@@ -72,9 +72,7 @@ class Controller
        * For the select boxes.
        */
       $this->wine_year_results = $this->model_wine->query_years();
-
       $this->region_results = $this->model_region->query_region();
-
       $this->grape_variety_results = $this->model_grape_varity->query_grape_variety();
 
       /** Get $_GET requests and check if they are numbers. */
@@ -98,6 +96,10 @@ class Controller
 
       foreach($this->wine_year_results as $row)
       {
+         /** 
+          * Check if $_GET year request is equal to
+          * the select so we can remember the selected box.
+          */
          if($this->wine_year_lo == $row["year"])
          {
             $this->mini_t->setVariable(
@@ -113,6 +115,10 @@ class Controller
 
       foreach($this->wine_year_results as $row)
       {
+         /** 
+          * Check if $_GET year request is equal to
+          * the select so we can remember the selected box.
+          */
          if($this->wine_year_hi == $row["year"])
          {
             $this->mini_t->setVariable(
@@ -134,6 +140,10 @@ class Controller
       }
       foreach($this->grape_variety_results as $row)
       {
+         /** 
+          * Check if $_GET grape_variety request is equal to
+          * the select so we can remember the selected box.
+          */
          if($this->grape_variety == $row["variety_id"])
          {
             $this->mini_t->setVariable(
@@ -188,6 +198,10 @@ class Controller
       }
       foreach($this->region_results as $row)
       {
+         /** 
+          * Check if $_GET region request is equal to
+          * the select so we can remember the selected box.
+          */
          if($this->region == $row["region_id"])
          {
             $this->mini_t->setVariable(
@@ -215,6 +229,7 @@ class Controller
             $this->allow_search = false;
          }
       }
+      /** Put $_GET winesearch request back into the view. */
       $this->mini_t->setVariable('winesearch',$this->winesearch);
 
       $this->winerysearch = "";
@@ -230,6 +245,7 @@ class Controller
             $this->allow_search = false;
          }
       }
+      /** Put $_GET winerysearch request back into the view. */
       $this->mini_t->setVariable('winerysearch',$this->winerysearch);
 
       $this->column = DEFAULT_ORDER_COLUMN;
@@ -280,7 +296,6 @@ class Controller
    protected function _resultsAction()
    {
       $this->commonActions();
-      
 
       /**
        * For pagination. Check if next is less or equals to 0 or
@@ -306,7 +321,6 @@ class Controller
       {
          /**
           * Sql total number of results per page.
-          * TODO: change variable name and allow 5, 10, 15, 30 results.
           */
          $this->limit_end = DEFAULT_TOTAL_LIMIT;
          
@@ -363,7 +377,11 @@ class Controller
                $this->max_cost,
                $this->limit_start,
                $this->limit_end);
-               
+
+         /** 
+          * Set wine pagination results here instead of
+          * the view script because of miniTemplator.
+          */
          foreach($this->wine_results as $row)
          {
             $this->mini_t->setVariable('wine_id', $row['wine_id']);
@@ -380,6 +398,17 @@ class Controller
          }
       }
 
+      /** 
+       * Check the wine pagination results if equal
+       * to zero and if so add error to miniTemplator 
+       * variable.
+       */
+      if(count($this->wine_results) == 0)
+      {
+       $this->mini_t->setVariable('no_records',
+         '<p style="color:red;">No records match your search criteria</p>');
+      }
+
       /**
        * Add 'Next' link if not at the end of pagination.
        * Assumed that the number of results is equal to
@@ -391,9 +420,13 @@ class Controller
          $this->html_nxt_link = '<a href="?next='.$this->next_link .'&amp;'.$this->add_gets.'">Next &gt;&gt;</a>';
          $this->mini_t->setVariable('html_nxt_link', $this->html_nxt_link);
       }
-      
-      $this->mini_t->setVariable('html_column', '?'.$this->html_column);
       $this->mini_t->setVariable('html_nxt_link', $this->html_nxt_link);
+
+      /** 
+       * Set html_column from commonAction here because 
+       * it's not needed anywhere else.
+       */
+      $this->mini_t->setVariable('html_column', $this->html_column);
 
       /** Add 'Previous' link if not at the beginning of pagination. */
       $this->html_prv_link = '';
@@ -429,9 +462,46 @@ class Controller
       /** Single result. */
       $this->wine_info = $this->model_wine->query_single_wine_id($this->wine_id);
 
+      /** Set the wine results into minitemplator */
+      $this->mini_t->setVariable('wine_info_wine_id', $this->wine_info['wine_id']);
+      $this->mini_t->setVariable('wine_info_wine_name', $this->wine_info['wine_name']);
+      $this->mini_t->setVariable('wine_info_year', $this->wine_info['year']);
+      $this->mini_t->setVariable('wine_info_wine_type', $this->wine_info['wine_type']);
+      $this->mini_t->setVariable('wine_info_winery_name', $this->wine_info['winery_name']);
+      $this->mini_t->setVariable('wine_info_region_name', $this->wine_info['region_name']);
+      $this->mini_t->setVariable('wine_info_on_hand', $this->wine_info['on_hand']);
+      $this->mini_t->setVariable('wine_info_cost', $this->wine_info['cost']);
+
       /** Multiple results. */
       $this->wine_info_grapes = $this->model_grape_varity->search_wine_id($this->wine_id);
+      foreach($this->wine_info_grapes as $rows)
+      {
+         /** Set grape varity results into minitemplator */
+         $this->mini_t->setVariable('wine_info_variety', $rows['variety']);
+         /** Put into block so that we can use foreach loop */
+         $this->mini_t->addBlock("wine_info_variety_block");
+      }
+
       $this->wine_info_orders = $this->model_orders->retrieve_orders($this->wine_id);
+      foreach($this->wine_info_orders as $rows)
+      {
+         $this->mini_t->setVariable('wine_info_order_id', $rows['order_id']);
+         $this->mini_t->setVariable('wine_info_date', $rows['date']);
+         $this->mini_t->setVariable('wine_info_title', $rows['title']);
+         $this->mini_t->setVariable('wine_info_firstname', $rows['firstname']);
+         $this->mini_t->setVariable('wine_info_surname', $rows['surname']);
+         $this->mini_t->setVariable('wine_info_address', $rows['address']);
+         $this->mini_t->setVariable('wine_info_city', $rows['city']);
+         $this->mini_t->setVariable('wine_info_state', $rows['state']);
+         $this->mini_t->setVariable('wine_info_zipcode', $rows['zipcode']);
+         $this->mini_t->setVariable('wine_info_country', $rows['country']);
+         $this->mini_t->setVariable('wine_info_phone', $rows['phone']);
+         $this->mini_t->setVariable('wine_info_birth_date', $rows['birth_date']);
+         $this->mini_t->setVariable('wine_info_qty', $rows['qty']);
+         $this->mini_t->setVariable('wine_info_price', $rows['price']);
+         $this->mini_t->setVariable('wine_info_instructions', $rows['instructions']);
+         $this->mini_t->addBlock("wine_info_pagination_block");
+      }
    }
 
    /**
@@ -443,5 +513,6 @@ class Controller
    protected function _404Action()
    {
       $this->commonActions();
+      $this->mini_t->setVariable('html_nxt_link', $this->html_nxt_link);
    }
 }
