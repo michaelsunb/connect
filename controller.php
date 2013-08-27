@@ -8,10 +8,21 @@ require_once('model_customer.php');
 
 require_once('helpers.php');
 
+/** Part C */
+require_once ("MiniTemplator.class.php");
+
 DEFINE("DEFAULT_ORDER_COLUMN",0);
+DEFINE("COLUMN_TOTAL_STOCK_SOLD",9);
+DEFINE("COLUMN_TOTAL_SALES_REVENUE",10);
+
 
 class Controller
 {
+   /**
+    * @var $mini_t  MiniTemplator model.
+    */
+   private $mini_t;
+
    /**
     * retrieves the view file, checked by index.php, and use actions
     *
@@ -21,18 +32,14 @@ class Controller
     */
    public function init($actions,$file_name)
    {
+      $this->mini_t = new MiniTemplator;
+      $this->mini_t->readTemplateFromFile($_SERVER['DOCUMENT_ROOT'] . $_SERVER["ASSIGN_PATH"] .$file_name);
+      $this->mini_t->setVariable("ASSIGN_PATH",$_SERVER["ASSIGN_PATH"]);
+
       $action = '_'.$actions.'Action';
       $this->$action();
 
-      /** Store the view file in a internal buffer */
-      ob_start();
-      require_once($_SERVER['DOCUMENT_ROOT'] . $_SERVER["ASSIGN_PATH"] .$file_name);
-      /** Internal buffer copied to a variable string */
-      $contents = ob_get_contents();
-      /** Discard the buffer contents */
-      ob_end_clean();
-
-      return $contents;
+      return $this->mini_t->generateOutput();
    }
 
    /**
@@ -65,7 +72,9 @@ class Controller
        * For the select boxes.
        */
       $this->wine_year_results = $this->model_wine->query_years();
+
       $this->region_results = $this->model_region->query_region();
+
       $this->grape_variety_results = $this->model_grape_varity->query_grape_variety();
 
       /** Get $_GET requests and check if they are numbers. */
@@ -82,8 +91,39 @@ class Controller
       $this->html_year_error = "";
       if($this->wine_year_lo > $this->wine_year_hi)
       {
-         $this->html_year_error =
+         $this->html_year_error = 
             '<span style="color:red;">Low year must be lower than High year.</span>';
+      }
+      $this->mini_t->setVariable('html_year_error',$this->html_year_error);
+
+      foreach($this->wine_year_results as $row)
+      {
+         if($this->wine_year_lo == $row["year"])
+         {
+            $this->mini_t->setVariable(
+               "select_year_lo",'<option value="'.$row["year"].'" selected>'.$row["year"].'</a>');
+         }
+         else
+         {
+            $this->mini_t->setVariable(
+               "select_year_lo",'<option value="'.$row["year"].'">'.$row["year"].'</a>');
+         }
+         $this->mini_t->addBlock("year_lo_select_block");
+      }
+
+      foreach($this->wine_year_results as $row)
+      {
+         if($this->wine_year_hi == $row["year"])
+         {
+            $this->mini_t->setVariable(
+               "select_year_hi",'<option value="'.$row["year"].'" selected>'.$row["year"].'</a>');
+         }
+         else
+         {
+            $this->mini_t->setVariable(
+               "select_year_hi",'<option value="'.$row["year"].'">'.$row["year"].'</a>');
+         }
+         $this->mini_t->addBlock("year_hi_select_block");
       }
       
       /** Get $_GET requests and check if they are numbers. */
@@ -91,6 +131,20 @@ class Controller
       if(isset($_GET['grape_variety']) && preg_match("/^[0-9]+$/", $_GET['grape_variety']))
       {
          $this->grape_variety = $_GET['grape_variety'];
+      }
+      foreach($this->grape_variety_results as $row)
+      {
+         if($this->grape_variety == $row["variety_id"])
+         {
+            $this->mini_t->setVariable(
+               "select_grape_variety",'<option value="'.$row["variety_id"].'" selected>'.$row["variety"].'</a>');
+         }
+         else
+         {
+            $this->mini_t->setVariable(
+               "select_grape_variety",'<option value="'.$row["variety_id"].'">'.$row["variety"].'</a>');
+         }
+         $this->mini_t->addBlock("grape_variety_select_block");
       }
       
       /** Get $_GET requests and check if they are numbers. */
@@ -103,6 +157,7 @@ class Controller
             $this->min_cost = $min_cost;
          }
       }
+      $this->mini_t->setVariable("min_cost",$this->min_cost);
       
       /** Get $_GET requests and check if they are numbers. */
       $this->max_cost = 0;
@@ -114,6 +169,7 @@ class Controller
             $this->max_cost = $max_cost;
          }
       }
+      $this->mini_t->setVariable("max_cost",$this->max_cost);
 
       /** Show error if min ocst is greater than max cost */
       $this->html_cost_error = "";
@@ -122,12 +178,27 @@ class Controller
          $this->html_cost_error =
             '<span style="color:red;">Min Cost must be lower than Max Cost</span>';
       }
+      $this->mini_t->setVariable("html_cost_error",$this->html_cost_error);
 
       /** 2 to 9 because region All is 1 and region_id 1 produces no results. */
       $this->region = 0;
       if(isset($_GET['region']) && preg_match("/^[2-9]+$/", $_GET['region']))
       {
          $this->region = $_GET['region'];
+      }
+      foreach($this->region_results as $row)
+      {
+         if($this->region == $row["region_id"])
+         {
+            $this->mini_t->setVariable(
+               "select_region",'<option value="'.$row["region_id"].'" selected>'.$row["region_name"].'</a>');
+         }
+         else
+         {
+            $this->mini_t->setVariable(
+               "select_region",'<option value="'.$row["region_id"].'">'.$row["region_name"].'</a>');
+         }
+         $this->mini_t->addBlock("region_select_block");
       }
 
       /** Allow if true to do a search query at results action. */
@@ -144,6 +215,7 @@ class Controller
             $this->allow_search = false;
          }
       }
+      $this->mini_t->setVariable('winesearch',$this->winesearch);
 
       $this->winerysearch = "";
       if(isset($_GET['winerysearch']))
@@ -158,6 +230,7 @@ class Controller
             $this->allow_search = false;
          }
       }
+      $this->mini_t->setVariable('winerysearch',$this->winerysearch);
 
       $this->column = DEFAULT_ORDER_COLUMN;
       /** allow for 2 numbers */
@@ -207,6 +280,7 @@ class Controller
    protected function _resultsAction()
    {
       $this->commonActions();
+      
 
       /**
        * For pagination. Check if next is less or equals to 0 or
@@ -289,6 +363,21 @@ class Controller
                $this->max_cost,
                $this->limit_start,
                $this->limit_end);
+               
+         foreach($this->wine_results as $row)
+         {
+            $this->mini_t->setVariable('wine_id', $row['wine_id']);
+            $this->mini_t->setVariable('wine_name', $row['wine_name']);
+            $this->mini_t->setVariable('variety', $row['variety']);
+            $this->mini_t->setVariable('wine_type', $row['wine_type']);
+            $this->mini_t->setVariable('winery_name', $row['winery_name']);
+            $this->mini_t->setVariable('region_name', $row['region_name']);
+            $this->mini_t->setVariable('on_hand', $row['on_hand']);
+            $this->mini_t->setVariable('cost', $row['cost']);
+            $this->mini_t->setVariable('total_qty', $row['total_qty']);
+            $this->mini_t->setVariable('total_price', $row['total_price']);
+            $this->mini_t->addBlock("wine_pagination_block");
+         }
       }
 
       /**
@@ -300,13 +389,18 @@ class Controller
       if(count($this->wine_results) == $this->limit_end)
       {
          $this->html_nxt_link = '<a href="?next='.$this->next_link .'&amp;'.$this->add_gets.'">Next &gt;&gt;</a>';
+         $this->mini_t->setVariable('html_nxt_link', $this->html_nxt_link);
       }
+      
+      $this->mini_t->setVariable('html_column', '?'.$this->html_column);
+      $this->mini_t->setVariable('html_nxt_link', $this->html_nxt_link);
 
       /** Add 'Previous' link if not at the beginning of pagination. */
       $this->html_prv_link = '';
       if($this->limit_start != DEFAULT_START_LIMIT)
       {
          $this->html_prv_link = '<a href="?next='.$this->prev_link.'&amp;'.$this->add_gets.'">&lt;&lt; Previous</a>';
+         $this->mini_t->setVariable('html_prv_link', $this->html_prv_link);
       }
    }
 

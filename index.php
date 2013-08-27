@@ -54,7 +54,7 @@ if(!file_exists($view_script_path) || !preg_match("/^([a-z]+|404)$/", $action))
  */
 require_once('controller.php');
 $controller = new Controller();
-echo $controller->init($action, $view_script_path);
+$controller->init($action, $view_script_path);
 
 ?>
 
