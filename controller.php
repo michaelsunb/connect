@@ -249,10 +249,18 @@ class Controller
       $this->mini_t->setVariable('winerysearch',$this->winerysearch);
 
       $this->column = DEFAULT_ORDER_COLUMN;
-      /** allow for 2 numbers */
+      /** Allow for 2 numbers. */
       if(isset($_GET['column']) && preg_match("/^[0-9]{0,2}$/", $_GET['column']))
       {
          $this->column = $_GET['column'];
+      }
+
+      $this->limits = DEFAULT_TOTAL_LIMIT;
+      /** Allow for 2 numbers with a maximum of 30. */
+      if(isset($_GET['limit']) && preg_match("/^[0-9]{0,2}$/", $_GET['limit'])
+       && $_GET['limit'] <= DEFAULT_TOTAL_LIMIT )
+      {
+         $this->limits = $_GET['limit'];
       }
 
       /** Add above $_GET requests to string for html link. */
@@ -266,6 +274,9 @@ class Controller
       /** Replace whitespace with %20 for w3c standards. */
       $this->add_gets .= '&amp;winesearch='.str_replace(' ', '%20', $this->winesearch);
       $this->add_gets .= '&amp;winerysearch='.str_replace(' ', '%20', $this->winerysearch);
+
+      /** Add limits to add_gets. */
+      $this->add_gets .= '&amp;limit='.$this->limits;
 
       /** Create url for columns. */
       $this->html_column = '?'.$this->add_gets.'&amp;column=';
@@ -306,30 +317,21 @@ class Controller
          (isset($_GET['next']) && $_GET['next'] <= 0) ||
          (isset($_GET['next']) && !preg_match("/^[0-9]+$/", $_GET['next'])))
       {
-         /**
-          * Default sql total number of results per page.
-          * TODO: change variable name
-          */
-         $this->limit_end = DEFAULT_TOTAL_LIMIT;
          
          /** Default html links. */
          $this->prev_link = DEFAULT_START_LIMIT;
-         $this->next_link = DEFAULT_END_LIMIT;
+         $this->next_link = $this->limits;
       }
       /** otherwise put $_GET next request into sql and html strings. */
       else
       {
-         /**
-          * Sql total number of results per page.
-          */
-         $this->limit_end = DEFAULT_TOTAL_LIMIT;
          
          // User input sql starting from row in table.
          $this->limit_start = $_GET['next'];
 
          // User input html next and previous links
-         $this->prev_link = $_GET['next'] - ADD_TO_LIMIT;
-         $this->next_link = $_GET['next'] + ADD_TO_LIMIT;
+         $this->prev_link = $_GET['next'] - $this->limits;
+         $this->next_link = $_GET['next'] + $this->limits;
       }
       
       /**
@@ -365,7 +367,7 @@ class Controller
              * $this->min_cost      $_GET['min_cost'] request.
              * $this->max_cost      $_GET['max_cost'] request..
              * $this->limit_start   $_GET['next'] request.
-             * $this->limit_end     from DEFAULT_TOTAL_LIMIT which is 30.
+             * $this->limits        from DEFAULT_TOTAL_LIMIT which is 30.
              */
             $this->model_winevariety->search_wine_name($this->winesearch,
                $this->winerysearch,
@@ -376,7 +378,7 @@ class Controller
                $this->min_cost,
                $this->max_cost,
                $this->limit_start,
-               $this->limit_end);
+               $this->limits);
 
          /** 
           * Set wine pagination results here instead of
@@ -415,7 +417,7 @@ class Controller
        * the total number of results limit set from 
        * the sql query.
        */
-      if(count($this->wine_results) == $this->limit_end)
+      if(count($this->wine_results) == $this->limits)
       {
          $this->html_nxt_link = '<a href="?next='.$this->next_link .'&amp;'.$this->add_gets.'">Next &gt;&gt;</a>';
          $this->mini_t->setVariable('html_nxt_link', $this->html_nxt_link);
@@ -433,8 +435,24 @@ class Controller
       if($this->limit_start != DEFAULT_START_LIMIT)
       {
          $this->html_prv_link = '<a href="?next='.$this->prev_link.'&amp;'.$this->add_gets.'">&lt;&lt; Previous</a>';
-         $this->mini_t->setVariable('html_prv_link', $this->html_prv_link);
       }
+      $this->mini_t->setVariable('html_prv_link', $this->html_prv_link);
+
+      /** Remove limit link in add_gets because we will add a new one. */
+      $add_gets = preg_replace('/\&amp;limit=[0-9]{0,2}/', "", $this->add_gets);
+      /** Create limits for pagination table. */
+      $this->html_limits = '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
+         $add_gets.'&amp;limit=5">5</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
+         $add_gets.'&amp;limit=10">10</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
+         $add_gets.'&amp;limit=15">15</a>, ';
+      $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
+         $add_gets.'&amp;limit=30">30</a>';
+      $this->mini_t->setVariable('html_limits', $this->html_limits);
+
+      /** Put limits in the view for hidden element */
+      $this->mini_t->setVariable('limits', $this->limits);
    }
 
    /**
