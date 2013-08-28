@@ -79,12 +79,12 @@ class _resultsController implements Controller
          if($this->wine_year_lo == $row["year"])
          {
             $this->mini_t->setVariable(
-               "select_year_lo",'<option value="'.$row["year"].'" selected>'.$row["year"].'</a>');
+               "select_year_lo",'<option value="'.$row["year"].'" selected>'.$row["year"].'</option>');
          }
          else
          {
             $this->mini_t->setVariable(
-               "select_year_lo",'<option value="'.$row["year"].'">'.$row["year"].'</a>');
+               "select_year_lo",'<option value="'.$row["year"].'">'.$row["year"].'</option>');
          }
          $this->mini_t->addBlock("year_lo_select_block");
       }
@@ -98,12 +98,12 @@ class _resultsController implements Controller
          if($this->wine_year_hi == $row["year"])
          {
             $this->mini_t->setVariable(
-               "select_year_hi",'<option value="'.$row["year"].'" selected>'.$row["year"].'</a>');
+               "select_year_hi",'<option value="'.$row["year"].'" selected>'.$row["year"].'</option>');
          }
          else
          {
             $this->mini_t->setVariable(
-               "select_year_hi",'<option value="'.$row["year"].'">'.$row["year"].'</a>');
+               "select_year_hi",'<option value="'.$row["year"].'">'.$row["year"].'</option>');
          }
          $this->mini_t->addBlock("year_hi_select_block");
       }
