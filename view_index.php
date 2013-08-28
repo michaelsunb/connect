@@ -26,6 +26,5 @@
       Min Cost: <input type="search" name="min_cost" value="" maxlength="6" size="6">
       Max Cost: <input type="search" name="max_cost" value="" maxlength="6" size="6">
       </div>
-      <input type="submit"> | 
-      <input type="button" value="Reset" onclick="location.href='<?= $_SERVER["ASSIGN_PATH"]; ?>'">
+      <input type="submit">
    </form>

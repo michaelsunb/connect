@@ -29,7 +29,8 @@
       Max Cost: <input type="search" name="max_cost" value="<?= $this->max_cost; ?>" maxlength="6" size="6">
       <?= $this->html_cost_error; ?>
       </div>
-      <input type="submit">
+      <input type="submit"> | 
+      <input type="button" value="Reset" onclick="location.href='<?= $_SERVER["ASSIGN_PATH"]; ?>'">
    </form>
 <?
 if(isset($this->wine_results) && count($this->wine_results) > 1)

@@ -65,15 +65,4 @@ class _wineinfoController implements Controller
       $this->wine_info_grapes = $model_grape_varity->search_wine_id($this->wine_id);
       $this->wine_info_orders = $model_orders->retrieve_orders($this->wine_id);
    }
-
-   /**
-    * 404 missing action to redirect
-    * users who are lost.
-    *
-    * @return void.
-    */
-   protected function _404Action()
-   {
-      $this->commonActions();
-   }
 }
