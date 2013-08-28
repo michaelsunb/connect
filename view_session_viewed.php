@@ -38,15 +38,22 @@
       Max Cost: <input type="search" name="max_cost" value="" maxlength="6" size="6">
       </div>
       <input type="submit"> | 
+      <input type="button" value="Back" onclick="goBack()"> | 
       <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}'">
    </form>
    <p>Wines viewed</p>
    <ul><!-- $BeginBlock wine_name_block -->
       <li>
-         <a href="wineinfo.html?wine_id=${wine_id}">${wine_id}</a>  
          ${wine_name}
       </li><!-- $EndBlock wine_name_block -->
    </ul>
    <form action="${ASSIGN_PATH}session_viewed.html" method="post">
       <input type="submit" name="tweet" value="Tweet!">
+      ${tweet_success}
    </form>
+   <script>
+      function goBack()
+      {
+         window.history.back()
+      }
+   </script>

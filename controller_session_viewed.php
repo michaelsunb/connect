@@ -47,7 +47,23 @@ class _session_viewedController implements Controller
          header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
          exit;
       }
+
+      if(isset($_GET['success']) &&
+         isset($_SESSION['oauth_token']) && 
+         isset($_SESSION['oauth_token_secret']))
+      {
+         $tweet_successful = '<span style="color:red;">Tweet was unsuccessful</span>';
+         if($_GET['success'] == 1)
+         {
+            $tweet_successful = '<span style="color:green;">Tweet was successful.</span>';
+         }
+
+         $this->mini_t->setVariable('tweet_success',$tweet_successful);
       
+         unset($_SESSION['oauth_token']);
+         unset($_SESSION['oauth_token_secret']);
+      }
+
       if(isset($_POST['tweet']))
       {
          $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
@@ -114,10 +130,10 @@ class _session_viewedController implements Controller
 
       /** Multiple results. */
       $wines = $model_wine->query_wine_in_id($wine_viewed);
+
+      /** Distinct wine names. */
       foreach($wines as $rows)
       {
-         /** Set wine name results into minitemplator */
-         $this->mini_t->setVariable('wine_id', $rows['wine_id']);
          $this->mini_t->setVariable('wine_name', $rows['wine_name']);
          /** Put into block so that we can use foreach loop */
          $this->mini_t->addBlock("wine_name_block");

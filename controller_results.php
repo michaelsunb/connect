@@ -79,12 +79,12 @@ class _resultsController implements Controller
          if($this->wine_year_lo == $row["year"])
          {
             $this->mini_t->setVariable(
-               "select_year_lo",'<option value="'.$row["year"].'" selected>'.$row["year"].'</a>');
+               "select_year_lo",'<option value="'.$row["year"].'" selected>'.$row["year"].'</option>');
          }
          else
          {
             $this->mini_t->setVariable(
-               "select_year_lo",'<option value="'.$row["year"].'">'.$row["year"].'</a>');
+               "select_year_lo",'<option value="'.$row["year"].'">'.$row["year"].'</option>');
          }
          $this->mini_t->addBlock("year_lo_select_block");
       }
@@ -98,12 +98,12 @@ class _resultsController implements Controller
          if($this->wine_year_hi == $row["year"])
          {
             $this->mini_t->setVariable(
-               "select_year_hi",'<option value="'.$row["year"].'" selected>'.$row["year"].'</a>');
+               "select_year_hi",'<option value="'.$row["year"].'" selected>'.$row["year"].'</option>');
          }
          else
          {
             $this->mini_t->setVariable(
-               "select_year_hi",'<option value="'.$row["year"].'">'.$row["year"].'</a>');
+               "select_year_hi",'<option value="'.$row["year"].'">'.$row["year"].'</option>');
          }
          $this->mini_t->addBlock("year_hi_select_block");
       }
@@ -427,6 +427,11 @@ class _resultsController implements Controller
          {
             $_SESSION['wine_viewed'] []= $row['wine_id'];
          }
+      }
+      
+      if(isset($_SESSION['wine_viewed']) && count($_SESSION['wine_viewed']) > 0)
+      {
+         $html_session .= '<p><a href="session_viewed.html">View Previous Session</a></p>';
       }
 
       $this->mini_t->setVariable("html_session",$html_session);

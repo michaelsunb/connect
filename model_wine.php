@@ -84,8 +84,7 @@ class ModelWine extends ModelAbstract
       $sql_in .= ")";
 
       $sql = "select 
-      `wine`.`wine_id`, 
-      `wine`.`wine_name`
+      DISTINCT`wine`.`wine_name`
       from `wine`
       where `wine`.`wine_id` IN " . $sql_in . "";
 

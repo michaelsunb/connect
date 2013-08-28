@@ -113,7 +113,7 @@
             </table>
          </td>
       </tr>
-   </table>   
+   </table>
    <script>
       function goBack()
       {

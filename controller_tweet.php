@@ -10,11 +10,6 @@ require_once('config.php');
 class _tweetController implements Controller
 {
    /**
-    * @var $mini_t  MiniTemplator model.
-    */
-   private $mini_t;
-
-   /**
     * retrieves the view file, checked by index.php, and use actions
     *
     * @return string return html body contents.
@@ -49,9 +44,6 @@ class _tweetController implements Controller
          
       $token_credentials = $connection->getAccessToken($_REQUEST['oauth_verifier']);
       
-      unset($_SESSION['oauth_token']);
-      unset($_SESSION['oauth_token_secret']);
-      
       $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $token_credentials['oauth_token'],
          $token_credentials['oauth_token_secret']);
 
@@ -76,7 +68,13 @@ class _tweetController implements Controller
       }
       $content = $connection->post('statuses/update', array('status' => $tweet));
 
-      header('location:'.$_SERVER["ASSIGN_PATH"].'session_viewed.html');
+      $tweet_successful = false;
+      if (200 == $connection->http_code) {
+        /* 200 connection tweet is successful */
+        $tweet_successful = true;
+      }
+
+      header('location:'.$_SERVER["ASSIGN_PATH"].'session_viewed.html?success='.$tweet_successful);
       exit;
    }
 }
