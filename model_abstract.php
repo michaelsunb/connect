@@ -18,6 +18,7 @@ abstract class ModelAbstract
       {
          try
          {
+            /** Part D */
             $dsn = DB_ENGINE .':host='. DB_HOST .';dbname='. DB_NAME;
             self::$db = new PDO($dsn, DB_USER, DB_PW);
          }

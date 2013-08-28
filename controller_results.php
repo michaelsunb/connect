@@ -1,20 +1,9 @@
 <?
-require_once('model_region.php');
-require_once('model_grapevariety.php');
-require_once('model_wine.php');
-require_once('model_winevariety.php');
-require_once('model_orders.php');
-require_once('model_customer.php');
-
 /** Part C */
-require_once ("MiniTemplator.class.php");
+require_once("MiniTemplator.class.php");
+require_once('controller_interface.php');
 
-DEFINE("DEFAULT_ORDER_COLUMN",0);
-DEFINE("COLUMN_TOTAL_STOCK_SOLD",9);
-DEFINE("COLUMN_TOTAL_SALES_REVENUE",10);
-
-
-class Controller
+class _resultsController implements Controller
 {
    /**
     * @var $mini_t  MiniTemplator model.
@@ -24,54 +13,43 @@ class Controller
    /**
     * retrieves the view file, checked by index.php, and use actions
     *
-    * @param string $actions     Actions to select which view you want.
-    * @param string $file_name   Choose a file from connect directory.
-    * @return void
+    * @return string return html body contents.
     */
-   public function init($actions,$file_name)
+   public function init()
    {
       $this->mini_t = new MiniTemplator;
-      $this->mini_t->readTemplateFromFile($_SERVER['DOCUMENT_ROOT'] . $_SERVER["ASSIGN_PATH"] .$file_name);
+      $this->mini_t->readTemplateFromFile($_SERVER['DOCUMENT_ROOT'] . $_SERVER["ASSIGN_PATH"] . 'view_results.php');
       $this->mini_t->setVariable("ASSIGN_PATH",$_SERVER["ASSIGN_PATH"]);
 
-      $action = '_'.$actions.'Action';
-      $this->$action();
+      $this->indexAction();
 
       $this->mini_t->generateOutput();
    }
 
    /**
-    * @var $models_[a-z]+  Common models used in the actions.
-    */
-   private $model_wine;
-   private $model_winevariety;
-   private $model_region;
-   private $model_grape_varity;
-
-   /**
-    * Repetitive actions are put in here
+    * Action to show a paginated list of wines.
     *
     * @return void.
     */
-   private function commonActions()
+   private function indexAction()
    {
       /** Default sql starting from row in table */
       $this->limit_start = DEFAULT_START_LIMIT;
 
       /** Create new models class. */
-      $this->model_orders = new ModelOrders();
-      $this->model_wine = new ModelWine();
-      $this->model_winevariety = new ModelWineVariety();
-      $this->model_region = new ModelRegion();
-      $this->model_grape_varity = new ModelGrapeVariety();
+      $model_orders = new ModelOrders();
+      $model_wine = new ModelWine();
+      $model_winevariety = new ModelWineVariety();
+      $model_region = new ModelRegion();
+      $model_grape_varity = new ModelGrapeVariety();
 
       /**
        * query all results for their respective models.
        * For the select boxes.
        */
-      $this->wine_year_results = $this->model_wine->query_years();
-      $this->region_results = $this->model_region->query_region();
-      $this->grape_variety_results = $this->model_grape_varity->query_grape_variety();
+      $this->wine_year_results = $model_wine->query_years();
+      $this->region_results = $model_region->query_region();
+      $this->grape_variety_results = $model_grape_varity->query_grape_variety();
 
       /** Get $_GET requests and check if they are numbers. */
       $this->wine_year_lo = 0;
@@ -145,12 +123,12 @@ class Controller
          if($this->grape_variety == $row["variety_id"])
          {
             $this->mini_t->setVariable(
-               "select_grape_variety",'<option value="'.$row["variety_id"].'" selected>'.$row["variety"].'</a>');
+               "select_grape_variety",'<option value="'.$row["variety_id"].'" selected>'.$row["variety"].'</option>');
          }
          else
          {
             $this->mini_t->setVariable(
-               "select_grape_variety",'<option value="'.$row["variety_id"].'">'.$row["variety"].'</a>');
+               "select_grape_variety",'<option value="'.$row["variety_id"].'">'.$row["variety"].'</option>');
          }
          $this->mini_t->addBlock("grape_variety_select_block");
       }
@@ -203,12 +181,12 @@ class Controller
          if($this->region == $row["region_id"])
          {
             $this->mini_t->setVariable(
-               "select_region",'<option value="'.$row["region_id"].'" selected>'.$row["region_name"].'</a>');
+               "select_region",'<option value="'.$row["region_id"].'" selected>'.$row["region_name"].'</option>');
          }
          else
          {
             $this->mini_t->setVariable(
-               "select_region",'<option value="'.$row["region_id"].'">'.$row["region_name"].'</a>');
+               "select_region",'<option value="'.$row["region_id"].'">'.$row["region_name"].'</option>');
          }
          $this->mini_t->addBlock("region_select_block");
       }
@@ -285,27 +263,7 @@ class Controller
       /** Format html a href link. */
       $this->html_nxt_link = '<a href="'.$_SERVER["ASSIGN_PATH"].'index.html">reset search</a><br />';
       $this->html_nxt_link .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'">reset pagination</a>';
-   }
-
-   /**
-    * Start Page
-    *
-    * @return void.
-    */
-   protected function _indexAction()
-   {
-      $this->commonActions();
-   }
-
-   /**
-    * Action to show a paginated list of wines.
-    *
-    * @return void.
-    */
-   protected function _resultsAction()
-   {
-      $this->commonActions();
-
+   
       /**
        * For pagination. Check if next is less or equals to 0 or
        * check if $_GET next request has failed number conditions
@@ -367,7 +325,7 @@ class Controller
              * $this->limit_start   $_GET['next'] request.
              * $this->limits        from DEFAULT_TOTAL_LIMIT which is 30.
              */
-            $this->model_winevariety->search_wine_name($this->winesearch,
+            $model_winevariety->search_wine_name($this->winesearch,
                $this->winerysearch,
                $selectsearch, 
                $this->column,
@@ -452,87 +410,5 @@ class Controller
 
       /** Put limits in the view for hidden element */
       $this->mini_t->setVariable('limits', $this->limits);
-   }
-
-   /**
-    * Action to show information for a
-    * particular Wine via wine_id.
-    *
-    * @return void.
-    */
-   protected function _wineinfoAction()
-   {
-      $this->wine_id = 0;
-      if(isset($_GET['wine_id']) && preg_match("/^[0-9]+$/", $_GET['wine_id']))
-      {
-         $this->wine_id = $_GET['wine_id'];
-      }
-      else
-      {
-         header("HTTP/1.0 404 Not Found");
-         header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
-         exit;
-      }
-
-      $this->commonActions();
-
-      /** Single result. */
-      $this->wine_info = $this->model_wine->query_single_wine_id($this->wine_id);
-
-      /** Set the wine results into minitemplator */
-      foreach($this->wine_info as $rows)
-      {
-         $this->mini_t->setVariable('wine_info_wine_id', $rows['wine_id']);
-         $this->mini_t->setVariable('wine_info_wine_name', $rows['wine_name']);
-         $this->mini_t->setVariable('wine_info_year', $rows['year']);
-         $this->mini_t->setVariable('wine_info_wine_type', $rows['wine_type']);
-         $this->mini_t->setVariable('wine_info_winery_name', $rows['winery_name']);
-         $this->mini_t->setVariable('wine_info_region_name', $rows['region_name']);
-         $this->mini_t->setVariable('wine_info_on_hand', $rows['on_hand']);
-         $this->mini_t->setVariable('wine_info_cost', $rows['cost']);
-      }
-
-      /** Multiple results. */
-      $this->wine_info_grapes = $this->model_grape_varity->search_wine_id($this->wine_id);
-      foreach($this->wine_info_grapes as $rows)
-      {
-         /** Set grape varity results into minitemplator */
-         $this->mini_t->setVariable('wine_info_variety', $rows['variety']);
-         /** Put into block so that we can use foreach loop */
-         $this->mini_t->addBlock("wine_info_variety_block");
-      }
-
-      $this->wine_info_orders = $this->model_orders->retrieve_orders($this->wine_id);
-      foreach($this->wine_info_orders as $rows)
-      {
-         $this->mini_t->setVariable('wine_info_order_id', $rows['order_id']);
-         $this->mini_t->setVariable('wine_info_date', $rows['date']);
-         $this->mini_t->setVariable('wine_info_title', $rows['title']);
-         $this->mini_t->setVariable('wine_info_firstname', $rows['firstname']);
-         $this->mini_t->setVariable('wine_info_surname', $rows['surname']);
-         $this->mini_t->setVariable('wine_info_address', $rows['address']);
-         $this->mini_t->setVariable('wine_info_city', $rows['city']);
-         $this->mini_t->setVariable('wine_info_state', $rows['state']);
-         $this->mini_t->setVariable('wine_info_zipcode', $rows['zipcode']);
-         $this->mini_t->setVariable('wine_info_country', $rows['country']);
-         $this->mini_t->setVariable('wine_info_phone', $rows['phone']);
-         $this->mini_t->setVariable('wine_info_birth_date', $rows['birth_date']);
-         $this->mini_t->setVariable('wine_info_qty', $rows['qty']);
-         $this->mini_t->setVariable('wine_info_price', $rows['price']);
-         $this->mini_t->setVariable('wine_info_instructions', $rows['instructions']);
-         $this->mini_t->addBlock("wine_info_pagination_block");
-      }
-   }
-
-   /**
-    * 404 missing action to redirect
-    * users who are lost.
-    *
-    * @return void.
-    */
-   protected function _404Action()
-   {
-      $this->commonActions();
-      $this->mini_t->setVariable('html_nxt_link', $this->html_nxt_link);
    }
 }
