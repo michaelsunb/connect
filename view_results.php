@@ -40,8 +40,7 @@
          Max Cost: <input type="search" name="max_cost" value="${max_cost}" maxlength="6" size="6">
          ${html_cost_error}
       </div>
-      <input type="submit"> | 
-      <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}'">
+      <input type="submit">
    </form>
    <table>
       <thead>
@@ -66,7 +65,7 @@
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
-            <td style="text-align:center;">${html_limits}</td>
+            <td>${html_limits}</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>

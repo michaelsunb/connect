@@ -26,19 +26,17 @@
            <option value="0">All</option><!-- $BeginBlock year_hi_select_block -->
            ${select_year_hi}<!-- $EndBlock year_hi_select_block -->
          </select>
-         ${html_year_error}
       </div>
       <div>
-      Search Wine: <input type="search" name="winesearch" value="${winesearch}">
+      Search Wine: <input type="search" name="winesearch" value="">
       </div>
       <div>
-      Search Winery: <input type="search" name="winerysearch" value="${winerysearch}">
+      Search Winery: <input type="search" name="winerysearch" value="">
       </div>
       <div>
-      Min Cost: <input type="search" name="min_cost" value="${min_cost}" maxlength="6" size="6">
-      Max Cost: <input type="search" name="max_cost" value="${max_cost}" maxlength="6" size="6">
-      ${html_cost_error}
+      Min Cost: <input type="search" name="min_cost" value="" maxlength="6" size="6">
+      Max Cost: <input type="search" name="max_cost" value="" maxlength="6" size="6">
       </div>
       <input type="submit"> | 
-      <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}'">
+      <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}index.html'">
    </form>

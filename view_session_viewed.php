@@ -1,14 +1,13 @@
-   ${html_session}
+
    <form action="${ASSIGN_PATH}results.html" method="get">
       <div>
-         Region: 
+      Region: 
          <select id="region" name="region"><!-- $BeginBlock region_select_block -->
            ${select_region}<!-- $EndBlock region_select_block -->
          </select>
-         <input type="hidden" name="limits" value="${limits}">
       </div>
       <div>
-         Grape Variety: 
+      Grape Variety: 
          <select id="grape_variety" name="grape_variety">
            <option value="0">All</option><!-- $BeginBlock grape_variety_select_block -->
            ${select_grape_variety}<!-- $EndBlock grape_variety_select_block -->
@@ -27,24 +26,19 @@
            <option value="0">All</option><!-- $BeginBlock year_hi_select_block -->
            ${select_year_hi}<!-- $EndBlock year_hi_select_block -->
          </select>
-         ${html_year_error}
       </div>
       <div>
-         Search Wine: <input type="search" name="winesearch" value="${winesearch}">
+      Search Wine: <input type="search" name="winesearch" value="">
       </div>
       <div>
-         Search Winery: <input type="search" name="winerysearch" value="${winerysearch}">
+      Search Winery: <input type="search" name="winerysearch" value="">
       </div>
       <div>
-         Min Cost: <input type="search" name="min_cost" value="${min_cost}" maxlength="6" size="6">
-         Max Cost: <input type="search" name="max_cost" value="${max_cost}" maxlength="6" size="6">
-         ${html_cost_error}
+      Min Cost: <input type="search" name="min_cost" value="" maxlength="6" size="6">
+      Max Cost: <input type="search" name="max_cost" value="" maxlength="6" size="6">
       </div>
       <input type="submit"> | 
       <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}'">
-   </form>
-   <form action="${ASSIGN_PATH}session_viewed.html" method="post">
-      <input type="submit" name="tweet">
    </form>
    <p>Wines viewed</p>
    <ul><!-- $BeginBlock wine_name_block -->
@@ -53,3 +47,6 @@
          ${wine_name}
       </li><!-- $EndBlock wine_name_block -->
    </ul>
+   <form action="${ASSIGN_PATH}session_viewed.html" method="post">
+      <input type="submit" name="tweet" value="Tweet!">
+   </form>
