@@ -40,7 +40,8 @@
       ${html_cost_error}
       </div>
       <input type="submit"> | 
-      <input type="button" value="Back" onclick="goBack()">
+      <input type="button" value="Back" onclick="goBack()"> | 
+      <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}index.html'">
    </form>
    <h1>Wine #${wine_info_wine_id}</h1>
    <table style="width:100%;text-align:center;">
