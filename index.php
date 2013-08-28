@@ -5,6 +5,8 @@ DEFINE("DEFAULT_TOTAL_LIMIT",30);
 
 DEFINE("ADD_TO_LIMIT",30);
 
+DEFINE("DEFAULT_ORDER_COLUMN",0);
+
 /** replace + (space) sign with \+ for preg_match */
 $query_string = str_replace('+', '\+', $_SERVER["QUERY_STRING"]);
 /** Remove any queries from the uri */
@@ -16,7 +18,7 @@ $destination = preg_replace('/\?'.$query_string.'/', "", $_SERVER['REQUEST_URI']
  * removes last array into $matches
  */
 $matches = explode("/",$destination);
-$actions = array_pop($matches);
+$controllers = array_pop($matches);
 
 /** create layout */
 ?>
@@ -26,35 +28,51 @@ $actions = array_pop($matches);
 <body>
 <? 
 /** if URI is just / then redirect to index.html */
-if(!isset($actions) || $actions == null)
+if(!isset($controllers) || $controllers == null)
 {
 	header('location:'.$_SERVER["ASSIGN_PATH"].'index.html');
 	exit;
 }
 else
 {
-   /** remove shtml, htm, or html or action */
-   $action = preg_replace('/(.s?html?|.php)$/', "", $actions);
+   /** remove shtml, htm, or html or php */
+   $controller = preg_replace('/(.s?html?|.php)$/', "", $controllers);
 }
 
 /**
  * Check here if view script file name exist and
  * if action is alphabetical or 404
  */
-$view_script_path = 'view_'.$action.'.php';
-if(!file_exists($view_script_path) || !preg_match("/^([a-z]+|404)$/", $action))
+$controller_path = 'controller_'.$controller.'.php';
+if(!file_exists($controller_path) || !preg_match("/^([a-z]+|404)$/", $controller))
 {
 	header("HTTP/1.0 404 Not Found");
 	header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
 	exit;
 }
 
+require_once('model_region.php');
+require_once('model_grapevariety.php');
+require_once('model_wine.php');
+require_once('model_winevariety.php');
+require_once('model_orders.php');
+require_once('model_customer.php');
+
+require_once('helpers.php');
+
 /**
- * Call Controller class and echo action
+ * Call Controller filename
  */
-require_once('controller.php');
-$controller = new Controller();
-echo $controller->init($action, $view_script_path);
+require_once($controller_path);
+
+/** Put _ in the beginning for 404 number */
+$controller_class = '_'.$controller.'Controller';
+
+/**
+ * Call Controller class
+ */
+$controller_model = new $controller_class();
+echo $controller_model->init();
 
 ?>
 

@@ -1,32 +1,20 @@
 <?
-require_once('model_region.php');
-require_once('model_grapevariety.php');
-require_once('model_wine.php');
-require_once('model_winevariety.php');
-require_once('model_orders.php');
-require_once('model_customer.php');
+require_once('controller_interface.php');
 
-require_once('helpers.php');
-
-DEFINE("DEFAULT_ORDER_COLUMN",0);
-
-class Controller
+class _resultsController implements Controller
 {
    /**
     * retrieves the view file, checked by index.php, and use actions
     *
-    * @param string $actions     Actions to select which view you want.
-    * @param string $file_name   Choose a file from connect directory.
-    * @return string             return html body contents.
+    * @return string return html body contents.
     */
-   public function init($actions,$file_name)
+   public function init()
    {
-      $action = '_'.$actions.'Action';
-      $this->$action();
+      $this->indexAction();
 
       /** Store the view file in a internal buffer */
       ob_start();
-      require_once($_SERVER['DOCUMENT_ROOT'] . $_SERVER["ASSIGN_PATH"] .$file_name);
+      require_once($_SERVER['DOCUMENT_ROOT'] . $_SERVER["ASSIGN_PATH"] . 'view_results.php');
       /** Internal buffer copied to a variable string */
       $contents = ob_get_contents();
       /** Discard the buffer contents */
@@ -36,37 +24,29 @@ class Controller
    }
 
    /**
-    * @var $models_[a-z]+  Common models used in the actions.
-    */
-   private $model_wine;
-   private $model_winevariety;
-   private $model_region;
-   private $model_grape_varity;
-
-   /**
-    * Repetitive actions are put in here
+    * Action to show a paginated list of wines.
     *
     * @return void.
     */
-   private function commonActions()
+   private function indexAction()
    {
       /** Default sql starting from row in table */
       $this->limit_start = DEFAULT_START_LIMIT;
 
       /** Create new models class. */
-      $this->model_orders = new ModelOrders();
-      $this->model_wine = new ModelWine();
-      $this->model_winevariety = new ModelWineVariety();
-      $this->model_region = new ModelRegion();
-      $this->model_grape_varity = new ModelGrapeVariety();
+      $model_orders = new ModelOrders();
+      $model_wine = new ModelWine();
+      $model_winevariety = new ModelWineVariety();
+      $model_region = new ModelRegion();
+      $model_grape_varity = new ModelGrapeVariety();
 
       /**
        * query all results for their respective models.
        * For the select boxes.
        */
-      $this->wine_year_results = $this->model_wine->query_years();
-      $this->region_results = $this->model_region->query_region();
-      $this->grape_variety_results = $this->model_grape_varity->query_grape_variety();
+      $this->wine_year_results = $model_wine->query_years();
+      $this->region_results = $model_region->query_region();
+      $this->grape_variety_results = $model_grape_varity->query_grape_variety();
 
       /** Get $_GET requests and check if they are numbers. */
       $this->wine_year_lo = 0;
@@ -131,7 +111,7 @@ class Controller
       }
 
       /** Allow if true to do a search query at results action. */
-      $this->allow_search = true;
+      $allow_search = true;
       $this->winesearch = "";
       if(isset($_GET['winesearch']))
       {
@@ -141,7 +121,7 @@ class Controller
             $_GET['winesearch'] != "")
          {
             /** Don't allow search query because $_GET request failed. */
-            $this->allow_search = false;
+            $allow_search = false;
          }
       }
 
@@ -155,7 +135,7 @@ class Controller
             $_GET['winerysearch'] != "")
          {
             /** Don't allow search query because $_GET request failed. */
-            $this->allow_search = false;
+            $allow_search = false;
          }
       }
 
@@ -198,26 +178,6 @@ class Controller
       /** Format html a href link. */
       $this->html_nxt_link = '<a href="'.$_SERVER["ASSIGN_PATH"].'index.html">reset search</a><br />';
       $this->html_nxt_link .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'">reset pagination</a>';
-   }
-
-   /**
-    * Start Page
-    *
-    * @return void.
-    */
-   protected function _indexAction()
-   {
-      $this->commonActions();
-   }
-
-   /**
-    * Action to show a paginated list of wines.
-    *
-    * @return void.
-    */
-   protected function _resultsAction()
-   {
-      $this->commonActions();
 
       /**
        * For pagination. Check if next is less or equals to 0 or
@@ -262,7 +222,7 @@ class Controller
 
       $this->wine_results = array();
       /** Allow if true to do a search query at results action. */
-      if($this->allow_search)
+      if($allow_search)
       {
          $this->wine_results = 
             /**
@@ -278,7 +238,7 @@ class Controller
              * $this->limit_start   $_GET['next'] request.
              * $this->limits     from DEFAULT_TOTAL_LIMIT which is 30.
              */
-            $this->model_winevariety->search_wine_name($this->winesearch,
+            $model_winevariety->search_wine_name($this->winesearch,
                $this->winerysearch,
                $selectsearch, 
                $this->column,
@@ -319,46 +279,5 @@ class Controller
          $add_gets.'&amp;limit=15">15</a>, ';
       $this->html_limits .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?next='.$this->limit_start.'&amp;'.
          $add_gets.'&amp;limit=30">30</a>';
-   }
-
-   /**
-    * Action to show information for a
-    * particular Wine via wine_id.
-    *
-    * @return void.
-    */
-   protected function _wineinfoAction()
-   {
-      $this->wine_id = 0;
-      if(isset($_GET['wine_id']) && preg_match("/^[0-9]+$/", $_GET['wine_id']))
-      {
-         $this->wine_id = $_GET['wine_id'];
-      }
-      else
-      {
-         header("HTTP/1.0 404 Not Found");
-         header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
-         exit;
-      }
-
-      $this->commonActions();
-
-      /** Single result. */
-      $this->wine_info = $this->model_wine->query_single_wine_id($this->wine_id);
-
-      /** Multiple results. */
-      $this->wine_info_grapes = $this->model_grape_varity->search_wine_id($this->wine_id);
-      $this->wine_info_orders = $this->model_orders->retrieve_orders($this->wine_id);
-   }
-
-   /**
-    * 404 missing action to redirect
-    * users who are lost.
-    *
-    * @return void.
-    */
-   protected function _404Action()
-   {
-      $this->commonActions();
    }
 }
