@@ -16,10 +16,10 @@ SetEnv ASSIGN_PATH /assign1/parte/
 RewriteRule ^model_([A-Za-z]+)(.*)$ /assign1/parte/404.shtml  [R,L]
 RewriteRule ^view_([A-Za-z0-9]+)(.*)$ /assign1/parte/404.shtml  [R,L]
 RewriteRule ^controller.php$ /assign1/parte/404.shtml  [R,L]
-RewriteRule ^connect.php$ /assign1/parte/404.shtml  [R,L]
 RewriteRule ^db.php$ /assign1/parte/404.shtml  [R,L]
 RewriteRule ^README.md$ /assign1/parte/404.shtml  [R,L]
 RewriteRule ^config.php$ /assign1/parte/404.shtml  [R,L]
+RewriteRule ^MiniTemplator.class.php$ /assign1/partc/404.shtml  [R,L]
 
 # Custom 404 errors
 ErrorDocument 404 /assign1/parte/404.shtml

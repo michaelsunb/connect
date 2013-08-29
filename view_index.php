@@ -1,5 +1,5 @@
    ${html_session}
-   <form action="${ASSIGN_PATH}results.html" method="get">
+   <form action="${ASSIGN_PATH}index.html" method="post">
       <div>
       Region: 
          <select id="region" name="region"><!-- $BeginBlock region_select_block -->
@@ -37,5 +37,5 @@
       Min Cost: <input type="search" name="min_cost" value="" maxlength="6" size="6">
       Max Cost: <input type="search" name="max_cost" value="" maxlength="6" size="6">
       </div>
-      <input type="submit">
+      <input type="submit" name="submit">
    </form>

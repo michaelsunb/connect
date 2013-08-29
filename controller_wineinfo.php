@@ -13,7 +13,7 @@ class _wineinfoController implements Controller
    /**
     * retrieves the view file, checked by index.php, and use actions
     *
-    * @return string return html body contents.
+    * @return void.
     */
    public function init()
    {
@@ -34,10 +34,29 @@ class _wineinfoController implements Controller
     */
    private function indexAction()
    {
-      $this->wine_id = 0;
-      if(isset($_GET['wine_id']) && preg_match("/^[0-9]+$/", $_GET['wine_id']))
+      $posts = array();
+
+      if(isset($_COOKIE['submit']))
       {
-         $this->wine_id = $_GET['wine_id'];
+         foreach($_COOKIE as $key=>$value)
+         {
+            $posts[$key] = $value;
+
+            /** 
+             * We delete $_COOKIEs by setting
+             * the cookie 60 minutes before
+             * the current time.
+             * We don't want the user to refresh
+             * the page.
+             */
+            setcookie($key, NULL, time() - SIXTY_MINUTES_IN_SEC);
+         }
+      }
+
+      $this->wine_id = 0;
+      if(isset($posts['wine_id']) && preg_match("/^[0-9]+$/", $posts['wine_id']))
+      {
+         $this->wine_id = $posts['wine_id'];
       }
       else
       {

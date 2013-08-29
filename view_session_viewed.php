@@ -1,5 +1,5 @@
 
-   <form action="${ASSIGN_PATH}results.html" method="get">
+   <form action="${ASSIGN_PATH}index.html" method="post">
       <div>
       Region: 
          <select id="region" name="region"><!-- $BeginBlock region_select_block -->
@@ -37,8 +37,7 @@
       Min Cost: <input type="search" name="min_cost" value="" maxlength="6" size="6">
       Max Cost: <input type="search" name="max_cost" value="" maxlength="6" size="6">
       </div>
-      <input type="submit"> | 
-      <input type="button" value="Back" onclick="goBack()"> | 
+      <input type="submit" name="submit"> | 
       <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}'">
    </form>
    <p>Wines viewed</p>
@@ -51,9 +50,3 @@
       <input type="submit" name="tweet" value="Tweet!">
       ${tweet_success}
    </form>
-   <script>
-      function goBack()
-      {
-         window.history.back()
-      }
-   </script>

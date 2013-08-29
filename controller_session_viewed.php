@@ -5,6 +5,11 @@ require_once('controller_interface.php');
 
 /** Part E */
 require_once('twitteroauth/twitteroauth.php');
+/** 
+ * Need config file for Twitter's
+ * CONSUMER_KEY, CONSUMER_SECRET and
+ * OAUTH_CALLBACK
+ */
 require_once('config.php');
 
 class _session_viewedController implements Controller
@@ -17,7 +22,7 @@ class _session_viewedController implements Controller
    /**
     * retrieves the view file, checked by index.php, and use actions
     *
-    * @return string return html body contents.
+    * @return void.
     */
    public function init()
    {
@@ -37,6 +42,21 @@ class _session_viewedController implements Controller
     */
    private function indexAction()
    {
+      if(isset($_COOKIE['submit']))
+      {
+         foreach($_COOKIE as $key=>$value)
+         {
+            /** 
+             * We delete $_COOKIEs by setting
+             * the cookie 60 minutes before
+             * the current time.
+             * We don't want the user to refresh
+             * the page.
+             */
+            setcookie($key, NULL, time() - SIXTY_MINUTES_IN_SEC);
+         }
+      }
+
       if(count($_SESSION['wine_viewed']) > 0)
       {
          $wine_viewed = $_SESSION['wine_viewed'];
@@ -48,6 +68,13 @@ class _session_viewedController implements Controller
          exit;
       }
 
+      /** 
+       * If tweet was successful we
+       * want to make it known to the
+       * user it was a success.
+       * Also we need to unset the oauth
+       * $_SESSION tokens.
+       */
       if(isset($_GET['success']) &&
          isset($_SESSION['oauth_token']) && 
          isset($_SESSION['oauth_token_secret']))
@@ -66,6 +93,11 @@ class _session_viewedController implements Controller
 
       if(isset($_POST['tweet']))
       {
+         /** 
+          * Let's make a tweet using
+          * Abraham Williams'
+          * TwitterOAuth
+          */
          $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
  
          /* Get temporary credentials. */
@@ -79,6 +111,7 @@ class _session_viewedController implements Controller
 
          /* Create a TwitterOauth object with consumer/user tokens. */
          header('location:'.$redirect_url);
+         exit;
       }
 
       /** Create new models class. */

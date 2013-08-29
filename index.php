@@ -7,6 +7,9 @@ DEFINE("ADD_TO_LIMIT",30);
 
 DEFINE("DEFAULT_ORDER_COLUMN",0);
 
+DEFINE("TEN_MINUTES_IN_SEC",600);
+DEFINE("SIXTY_MINUTES_IN_SEC",3600);
+
 /** replace + (space) sign with \+ for preg_match */
 $query_string = str_replace('+', '\+', $_SERVER["QUERY_STRING"]);
 /** Remove any queries from the uri */
@@ -72,7 +75,7 @@ $controller_class = '_'.$controller.'Controller';
  * Call Controller class
  */
 $controller_model = new $controller_class();
-echo $controller_model->init();
+$controller_model->init();
 
 ?>
 

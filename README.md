@@ -1,3 +1,5 @@
-http://stackoverflow.com/questions/2939820/how-to-enable-curl-installed-ubuntu-lamp-stack
+Acknowledgement
+===============
 
+I would like to acknowledge Abraham Williams for I am using TwitterOauth.
 https://github.com/abraham/twitteroauth
