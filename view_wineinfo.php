@@ -27,6 +27,7 @@
       Max Cost: <input type="search" name="max_cost" value="" maxlength="6" size="6">
       </div>
       <input type="submit" name="submit"> | 
+      <input type="button" value="Back" onclick="goBack()"> | 
       <input type="button" value="Reset" onclick="location.href='<?= $_SERVER["ASSIGN_PATH"]; ?>'">
    </form>
    <h1>Wine #<?= $this->wine_info['wine_id']; ?></h1>
@@ -111,3 +112,9 @@
          </td>
       </tr>
    </table>
+   <script>
+      function goBack()
+      {
+         window.history.back()
+      }
+   </script>
