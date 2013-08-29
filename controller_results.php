@@ -13,7 +13,7 @@ class _resultsController implements Controller
    /**
     * retrieves the view file, checked by index.php, and use actions
     *
-    * @return string return html body contents.
+    * @return void.
     */
    public function init()
    {

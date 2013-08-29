@@ -73,7 +73,7 @@ $controller_class = '_'.$controller.'Controller';
  * Call Controller class
  */
 $controller_model = new $controller_class();
-echo $controller_model->init();
+$controller_model->init();
 
 ?>
 
