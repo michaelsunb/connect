@@ -10,11 +10,6 @@ class _indexController implements Controller
     */
    public function init()
    {
-      if(isset($_POST['submit']) || isset($_COOKIE['submit']))
-      {
-         $this->postAction();
-      }
-
       $this->indexAction();
 
       /** Store the view file in a internal buffer */
@@ -52,7 +47,9 @@ class _indexController implements Controller
    }
 
    /**
-    * Start Page
+    * Post Action to set the
+    * $_POST in a cookie for a
+    * two component query module.
     *
     * @return void.
     */
