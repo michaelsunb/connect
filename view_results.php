@@ -29,7 +29,7 @@
       Max Cost: <input type="search" name="max_cost" value="<?= $this->max_cost; ?>" maxlength="6" size="6">
       <?= $this->html_cost_error; ?>
       </div>
-      <input type="submit"> | 
+      <input type="submit" name="submit"> | 
       <input type="button" value="Reset" onclick="location.href='<?= $_SERVER["ASSIGN_PATH"]; ?>'">
    </form>
 <?
