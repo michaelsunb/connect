@@ -1,5 +1,5 @@
 
-   <form action="${ASSIGN_PATH}results.html" method="get">
+   <form action="${ASSIGN_PATH}index.html" method="post">
       <div>
       Region: 
          <select id="region" name="region"><!-- $BeginBlock region_select_block -->
@@ -39,7 +39,7 @@
       Max Cost: <input type="search" name="max_cost" value="${max_cost}" maxlength="6" size="6">
       ${html_cost_error}
       </div>
-      <input type="submit"> | 
+      <input type="submit" name="submit"> | 
       <input type="button" value="Back" onclick="goBack()"> | 
       <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}index.html'">
    </form>
@@ -113,7 +113,7 @@
             </table>
          </td>
       </tr>
-   </table>   
+   </table>
    <script>
       function goBack()
       {

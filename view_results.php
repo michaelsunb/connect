@@ -1,11 +1,11 @@
 
-   <form action="${ASSIGN_PATH}results.html" method="get">
+   <form action="${ASSIGN_PATH}index.html" method="post">
       <div>
          Region: 
          <select id="region" name="region"><!-- $BeginBlock region_select_block -->
            ${select_region}<!-- $EndBlock region_select_block -->
          </select>
-         <input type="hidden" name="limits" value="${limits}">
+         <input type="hidden" name="limit" value="${limits}">
       </div>
       <div>
          Grape Variety: 
@@ -40,7 +40,7 @@
          Max Cost: <input type="search" name="max_cost" value="${max_cost}" maxlength="6" size="6">
          ${html_cost_error}
       </div>
-      <input type="submit"> | 
+      <input type="submit" name="submit"> | 
       <input type="button" value="Reset" onclick="location.href='${ASSIGN_PATH}index.html'">
    </form>
    <table>
@@ -76,7 +76,7 @@
       </tfoot>
       <tbody style="text-align:center;"><!-- $BeginBlock wine_pagination_block -->
          <tr>
-            <td><a href="wineinfo.html?wine_id=${wine_id}">${wine_id}</a></td>
+            <td><a href="results.html?wine_id=${wine_id}">${wine_id}</a></td>
             <td>${wine_name}</td>
             <td>${variety}</td>
             <td>${year}</td>
