@@ -31,10 +31,36 @@ class _wineinfoController implements Controller
     */
    private function indexAction()
    {
-      $this->wine_id = 0;
-      if(isset($_GET['wine_id']) && preg_match("/^[0-9]+$/", $_GET['wine_id']))
+      if(isset($_COOKIE['submit']))
       {
-         $this->wine_id = $_GET['wine_id'];
+         $this->add_gets = $_SERVER["ASSIGN_PATH"]."results.html?";
+         $add_amp = false;
+         foreach($_COOKIE as $key=>$value)
+         {
+            $posts[$key] = $value;
+
+            /** Delete cookie. */
+            setcookie($key, NULL, time() - 3600);
+            
+            if($add_amp)
+            {
+               $this->add_gets .= "&amp;";
+            }
+            
+            $this->add_gets .= $key . "=" . $value;
+         }
+      }
+      else
+      {
+         header("HTTP/1.0 404 Not Found");
+         header('location:'.$_SERVER["ASSIGN_PATH"].'404.shtml');
+         exit;
+      }
+
+      $this->wine_id = 0;
+      if(isset($posts['wine_id']) && preg_match("/^[0-9]+$/", $posts['wine_id']))
+      {
+         $this->wine_id = $posts['wine_id'];
       }
       else
       {

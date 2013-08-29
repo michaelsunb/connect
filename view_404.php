@@ -1,5 +1,5 @@
 
-   <form action="<?= $_SERVER["ASSIGN_PATH"]; ?>results.html" method="get">
+   <form action="<?= $_SERVER["ASSIGN_PATH"]; ?>index.html" method="post">
       <div>
       Region: 
       <? Helpers::select("region",$this->region_results,array('region_id','region_name'),0); ?>

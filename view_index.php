@@ -1,5 +1,5 @@
 
-   <form action="<?= $_SERVER["ASSIGN_PATH"]; ?>results.html" method="get">
+   <form action="<?= $_SERVER["ASSIGN_PATH"]; ?>index.html" method="post">
       <div>
       Region: 
       <? Helpers::select("region",$this->region_results,array('region_id','region_name'),0); ?>
@@ -26,5 +26,5 @@
       Min Cost: <input type="search" name="min_cost" value="" maxlength="6" size="6">
       Max Cost: <input type="search" name="max_cost" value="" maxlength="6" size="6">
       </div>
-      <input type="submit">
+      <input type="submit" name="submit">
    </form>

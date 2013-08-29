@@ -30,6 +30,52 @@ class _resultsController implements Controller
     */
    private function indexAction()
    {
+      $posts = array();
+
+      if(!isset($_COOKIE['submit']) && 
+      (isset($_GET['next']) ||
+       isset($_GET['limit']) ||
+       isset($_GET['column']) ||
+       isset($_GET['wine_id'])))
+      {
+         $view = 'results.html';
+         if(isset($_GET['wine_id']))
+         {
+            $view = 'wineinfo.html';
+         }
+         
+         foreach($_GET as $key=>$value)
+         {
+            /** Two component query module. */
+            setcookie($key, $value, time()+TEN_MINUTES_IN_SEC);
+         }
+         setcookie('submit', 'Submit', time()+TEN_MINUTES_IN_SEC);
+
+         header('location:'.$_SERVER["ASSIGN_PATH"].$view);
+         exit;
+      }
+      elseif(isset($_COOKIE['submit']))
+      {
+         foreach($_COOKIE as $key=>$value)
+         {
+            $posts[$key] = $value;
+
+            /** 
+             * We delete $_COOKIEs by setting
+             * the cookie 60 minutes before
+             * the current time.
+             * We don't want the user to refresh
+             * the page.
+             */
+            setcookie($key, NULL, time() - SIXTY_MINUTES_IN_SEC);
+         }
+      }
+      else
+      {
+         header('location:'.$_SERVER["ASSIGN_PATH"]."index.html");
+         exit;
+      }
+
       /** Default sql starting from row in table */
       $this->limit_start = DEFAULT_START_LIMIT;
 
@@ -48,16 +94,16 @@ class _resultsController implements Controller
       $this->region_results = $model_region->query_region();
       $this->grape_variety_results = $model_grape_varity->query_grape_variety();
 
-      /** Get $_GET requests and check if they are numbers. */
+      /** Get $posts requests and check if they are numbers. */
       $this->wine_year_lo = 0;
-      if(isset($_GET['wine_year_lo']) && preg_match("/^[0-9]+$/", $_GET['wine_year_lo']))
+      if(isset($posts['wine_year_lo']) && preg_match("/^[0-9]+$/", $posts['wine_year_lo']))
       {
-         $this->wine_year_lo = $_GET['wine_year_lo'];
+         $this->wine_year_lo = $posts['wine_year_lo'];
       }
       $this->wine_year_hi = 0;
-      if(isset($_GET['wine_year_hi']) && preg_match("/^[0-9]+$/", $_GET['wine_year_hi']))
+      if(isset($posts['wine_year_hi']) && preg_match("/^[0-9]+$/", $posts['wine_year_hi']))
       {
-         $this->wine_year_hi = $_GET['wine_year_hi'];
+         $this->wine_year_hi = $posts['wine_year_hi'];
       }
       $this->html_year_error = "";
       if($this->wine_year_lo > $this->wine_year_hi)
@@ -66,29 +112,29 @@ class _resultsController implements Controller
             '<span style="color:red;">Low year must be lower than High year.</span>';
       }
       
-      /** Get $_GET requests and check if they are numbers. */
+      /** Get $posts requests and check if they are numbers. */
       $this->grape_variety = 0;
-      if(isset($_GET['grape_variety']) && preg_match("/^[0-9]+$/", $_GET['grape_variety']))
+      if(isset($posts['grape_variety']) && preg_match("/^[0-9]+$/", $posts['grape_variety']))
       {
-         $this->grape_variety = $_GET['grape_variety'];
+         $this->grape_variety = $posts['grape_variety'];
       }
       
-      /** Get $_GET requests and check if they are numbers. */
+      /** Get $posts requests and check if they are numbers. */
       $this->min_cost = 0;
-      if(isset($_GET['min_cost']))
+      if(isset($posts['min_cost']))
       {
-         $min_cost = preg_replace('/^\$/', '', $_GET["min_cost"]);
+         $min_cost = preg_replace('/^\$/', '', $posts["min_cost"]);
          if(preg_match("/^[0-9.]+$/", $min_cost))
          {
             $this->min_cost = $min_cost;
          }
       }
       
-      /** Get $_GET requests and check if they are numbers. */
+      /** Get $posts requests and check if they are numbers. */
       $this->max_cost = 0;
-      if(isset($_GET['max_cost']))
+      if(isset($posts['max_cost']))
       {
-         $max_cost = preg_replace('/^\$/', '', $_GET["max_cost"]);
+         $max_cost = preg_replace('/^\$/', '', $posts["max_cost"]);
          if(preg_match("/^[0-9.]+$/", $max_cost))
          {
             $this->max_cost = $max_cost;
@@ -105,56 +151,56 @@ class _resultsController implements Controller
 
       /** 2 to 9 because region All is 1 and region_id 1 produces no results. */
       $this->region = 0;
-      if(isset($_GET['region']) && preg_match("/^[2-9]+$/", $_GET['region']))
+      if(isset($posts['region']) && preg_match("/^[2-9]+$/", $posts['region']))
       {
-         $this->region = $_GET['region'];
+         $this->region = $posts['region'];
       }
 
       /** Allow if true to do a search query at results action. */
       $allow_search = true;
       $this->winesearch = "";
-      if(isset($_GET['winesearch']))
+      if(isset($posts['winesearch']))
       {
-         $this->winesearch = $_GET['winesearch'];
+         $this->winesearch = $posts['winesearch'];
          /** Allows all letters. */
-         if(!preg_match("/^[A-Za-z]+$/", $_GET['winesearch']) &&
-            $_GET['winesearch'] != "")
+         if(!preg_match("/^[A-Za-z]+$/", $posts['winesearch']) &&
+            $posts['winesearch'] != "")
          {
-            /** Don't allow search query because $_GET request failed. */
+            /** Don't allow search query because $posts request failed. */
             $allow_search = false;
          }
       }
 
       $this->winerysearch = "";
-      if(isset($_GET['winerysearch']))
+      if(isset($posts['winerysearch']))
       {
-         $this->winerysearch = $_GET['winerysearch'];
+         $this->winerysearch = $posts['winerysearch'];
 
          /** Allows spaces as well as all letters. */
-         if(!preg_match("/^[A-Za-z ]+$/", $_GET['winerysearch']) &&
-            $_GET['winerysearch'] != "")
+         if(!preg_match("/^[A-Za-z ]+$/", $posts['winerysearch']) &&
+            $posts['winerysearch'] != "")
          {
-            /** Don't allow search query because $_GET request failed. */
+            /** Don't allow search query because $posts request failed. */
             $allow_search = false;
          }
       }
 
       $this->column = DEFAULT_ORDER_COLUMN;
       /** Allow for 2 numbers. */
-      if(isset($_GET['column']) && preg_match("/^[0-9]{0,2}$/", $_GET['column']))
+      if(isset($posts['column']) && preg_match("/^[0-9]{0,2}$/", $posts['column']))
       {
-         $this->column = $_GET['column'];
+         $this->column = $posts['column'];
       }
 
       $this->limits = DEFAULT_TOTAL_LIMIT;
       /** Allow for 2 numbers with a maximum of 30. */
-      if(isset($_GET['limit']) && preg_match("/^[0-9]{0,2}$/", $_GET['limit'])
-       && $_GET['limit'] <= DEFAULT_TOTAL_LIMIT )
+      if(isset($posts['limit']) && preg_match("/^[0-9]{0,2}$/", $posts['limit'])
+       && $posts['limit'] <= DEFAULT_TOTAL_LIMIT )
       {
-         $this->limits = $_GET['limit'];
+         $this->limits = $posts['limit'];
       }
 
-      /** Add above $_GET requests to string for html link. */
+      /** Add above $posts requests to string for html link. */
       $this->add_gets = 'region='.$this->region;
       $this->add_gets .= '&amp;wine_year_lo='.$this->wine_year_lo;
       $this->add_gets .= '&amp;wine_year_hi='.$this->wine_year_hi;
@@ -177,30 +223,29 @@ class _resultsController implements Controller
 
       /** Format html a href link. */
       $this->html_nxt_link = '<a href="'.$_SERVER["ASSIGN_PATH"].'index.html">reset search</a><br />';
-      $this->html_nxt_link .= '<a href="'.$_SERVER["ASSIGN_PATH"].'results.html?'.$this->add_gets.'">reset pagination</a>';
 
       /**
        * For pagination. Check if next is less or equals to 0 or
-       * check if $_GET next request has failed number conditions
+       * check if $posts next request has failed number conditions
        * and tehn set to default limits.
        */
-      if(!isset($_GET['next']) ||
-         (isset($_GET['next']) && $_GET['next'] <= 0) ||
-         (isset($_GET['next']) && !preg_match("/^[0-9]+$/", $_GET['next'])))
+      if(!isset($posts['next']) ||
+         (isset($posts['next']) && $posts['next'] <= 0) ||
+         (isset($posts['next']) && !preg_match("/^[0-9]+$/", $posts['next'])))
       {
          /** Default html links. */
          $this->prev_link = DEFAULT_START_LIMIT;
          $this->next_link = $this->limits;
       }
-      /** otherwise put $_GET next request into sql and html strings. */
+      /** otherwise put $posts next request into sql and html strings. */
       else
       {
          // User input sql starting from row in table.
-         $this->limit_start = $_GET['next'];
+         $this->limit_start = $posts['next'];
 
          // User input html next and previous links
-         $this->prev_link = $_GET['next'] - $this->limits;
-         $this->next_link = $_GET['next'] + $this->limits;
+         $this->prev_link = $posts['next'] - $this->limits;
+         $this->next_link = $posts['next'] + $this->limits;
       }
       
       /**
@@ -228,14 +273,14 @@ class _resultsController implements Controller
             /**
              * wine_variety model has the sql with lots ofjoins.
              *
-             * $this->winesearch    from $_GET['winesearch'] request.
-             * $this->winerysearch  from $_GET['winerysearch'] request.
-             * $selectsearch        from select box $_GET requests.
-             * $this->wine_year_lo  $_GET['wine_year_lo'] request.
-             * $this->wine_year_hi  $_GET['wine_year_hi'] request.
-             * $this->min_cost      $_GET['min_cost'] request.
-             * $this->max_cost      $_GET['max_cost'] request..
-             * $this->limit_start   $_GET['next'] request.
+             * $this->winesearch    from $posts['winesearch'] request.
+             * $this->winerysearch  from $posts['winerysearch'] request.
+             * $selectsearch        from select box $posts requests.
+             * $this->wine_year_lo  $posts['wine_year_lo'] request.
+             * $this->wine_year_hi  $posts['wine_year_hi'] request.
+             * $this->min_cost      $posts['min_cost'] request.
+             * $this->max_cost      $posts['max_cost'] request..
+             * $this->limit_start   $posts['next'] request.
              * $this->limits     from DEFAULT_TOTAL_LIMIT which is 30.
              */
             $model_winevariety->search_wine_name($this->winesearch,

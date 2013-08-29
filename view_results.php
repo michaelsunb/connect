@@ -1,5 +1,5 @@
 
-   <form action="<?= $_SERVER["ASSIGN_PATH"]; ?>results.html" method="get">
+   <form action="<?= $_SERVER["ASSIGN_PATH"]; ?>index.html" method="post">
       <div>
       Region: 
       <? Helpers::select("region",$this->region_results,array('region_id','region_name'),$this->region); ?>
@@ -73,7 +73,7 @@ if(isset($this->wine_results) && count($this->wine_results) > 1)
       echo "\n";
       ?>
          <tr>
-            <td><a href="wineinfo.html?wine_id=<?= $row['wine_id']; ?>"><?= $row['wine_id']; ?></a></td>
+            <td><a href="results.html?wine_id=<?= $row['wine_id']; ?>"><?= $row['wine_id']; ?></a></td>
             <td><?= $row['wine_name']; ?></td>
             <td><?= $row['variety']; ?></td>
             <td><?= $row['year']; ?></td>
